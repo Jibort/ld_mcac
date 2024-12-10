@@ -11,11 +11,6 @@ import (
 	"unsafe"
 )
 
-// Inicialització del paquet 'core'.
-func init() {
-	// fmt.Printf("SmallThreshold64 = %v\n", SmallThreshold64)
-}
-
 // QUANTITZACIÓ -----------------------
 // Assegura que els decimals mantenen la precisió desitjada.
 func Quantize64(pVal float64) float64 {
@@ -67,8 +62,8 @@ func F64ToI32(pFt float64) int32 {
 	return *(*int32)(unsafe.Pointer(&bits))
 }
 
-func F64ToU64(pFt float64) uint64 {
-	return math.Float64bits(pFt)
+func F64ToU64(pF64 float64) uint64 {
+	return *(*uint64)(unsafe.Pointer(&pF64))
 }
 
 func F64ToU32(pFt float64) uint32 {
@@ -95,8 +90,8 @@ func F64ToB64(pFt float64) string {
 
 // U64 a ..............................
 // Conversió des de uint64 a float64
-func U64ToF64(pBits uint64) float64 {
-	return math.Float64frombits(pBits)
+func U64ToF64(pF64 uint64) float64 {
+	return *(*float64)(unsafe.Pointer(&pF64))
 }
 
 func U64ToB64(pVal uint64) string {

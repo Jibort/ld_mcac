@@ -19,11 +19,11 @@ func (sSrc RangeF64) GetValue() float64 { return sSrc.value }
 
 // CONSTRUCTORS -----------------------
 // Constructor amb grup.
-func NewRangeF64WithGroup(value float64, group int) RangeF64 {
+func NewRangeF64WithGroup(value float64, pGroup int) RangeF64 {
 	bits := math.Float64bits(value)
 	exponent := uint64(0)
 
-	switch group {
+	switch pGroup {
 	case 1: // Grup A
 		exponent = 1023 // o 1022
 	case 2: // Grup B
@@ -42,8 +42,12 @@ func NewRangeF64WithGroup(value float64, group int) RangeF64 {
 	return RangeF64{value: math.Float64frombits(bits)}
 }
 
-func NewRangeF64(pVal float64) (rF64 RangeF64) {
-	return NewRangeF64WithGroup(pVal, 1)
+func NewRangeF64(pF64 float64) RangeF64 {
+	return RangeF64{value: pF64}
+}
+
+func NewRangeU64(pU64 uint64) (rF64 RangeF64) {
+	return RangeF64{value: U64ToF64(pU64)}
 }
 
 // Constructor general a partir d'un float64.
@@ -155,74 +159,46 @@ func (sSrc RangeF64) IsInfiniteNeg() bool {
 }
 
 // Grups.
+// [GPT] IsGroupA comprova si el valor és del Grup A
 func (sSrc RangeF64) IsGroupA() bool {
 	bits := F64ToU64(sSrc.value)
-	exponent := int((bits >> 52) & 0x7FF)
-	return (exponent == 1022) || (exponent == 1023)
-}
 
-func (sSrc RangeF64) IsGroupB() bool {
-	bits := F64ToU64(sSrc.value)
-	exponent := int((bits >> 52) & 0x7FF)
-	return (exponent == 1024)
-
-}
-
-func (sSrc RangeF64) IsGroupA_() bool {
-	expBits := sSrc.ExtractExponent()
-	return expBits == 1023 // 0b00000000_00000000 // Comprovar si els bits de l'exponent són tots zeros
-}
-
-func (sSrc RangeF64) IsGroupB_() bool {
-	expBits := sSrc.ExtractExponent()
-	return expBits == 1024 // 0b00000000_00000001
-}
-
-func (sSrc RangeF64) IsGroupC_() bool {
-	bits := F64ToU64(sSrc.value)
-	return ((bits<<1)>>1)&GroupMask == GroupCMask
-}
-
-func (sSrc RangeF64) IsGroupD_() bool {
-	bits := F64ToU64(sSrc.value)
-	return ((bits<<1)>>1)&GroupMask == GroupDMask
-}
-
-func (sSrc RangeF64) IsGroupC() bool {
-	bits := F64ToU64(sSrc.value)
-	exponent := int((bits >> 52) & 0x7FF)
-	return (exponent == 1025)
-}
-
-func (sSrc RangeF64) IsGroupD() bool {
-	bits := F64ToU64(sSrc.value)
-	exponent := int((bits >> 52) & 0x7FF)
-	return (exponent == 1026)
-}
-
-func (sSrc RangeF64) ClassifyBlock() int {
-	bits := F64ToU64(sSrc.value)
-	exponent := int((bits >> 52) & 0x7FF)
-	exponentReal := exponent - 1023
-
-	switch {
-	case exponentReal >= 1:
-		return 1
-	case exponentReal == 0:
-		return 2
-	case exponentReal == -1:
-		return 3
-	case exponentReal <= -2:
-		return 4
-	default:
-		return 0 // Cas inesperat
+	// Comprova si és zero (normalitzant el signe)
+	if ((bits << 1) >> 1) == 0 {
+		return true
 	}
+
+	// Casos especials: infinits i NaN
+	if (bits&MetaMask) == 0x7FF0000000000000 || (bits&MetaMask) == 0xFFF0000000000000 {
+		return false // +∞ o -∞
+	}
+	if (bits&MetaMask) == 0x7FF0000000000000 && (bits&ValueMask) != 0 {
+		return false // NaN
+	}
+
+	// Elimina el bit de signe i verifica que pertany al Grup A
+	unsignedBits := bits & ^SignMask
+	return (unsignedBits&GroupMask) == GroupAMask && (unsignedBits&MetaMask) >= (1022<<52) && (unsignedBits&MetaMask) <= (1023<<52)
 }
 
-// TODO: Per a debugar.
-func (sSrc RangeF64) DebugBits() string {
-	bits := F64ToU64(sSrc.value)
-	return fmt.Sprintf("Bits: %064b\nGroup: %02b", bits, (bits&GroupMask)>>62)
+// [GPT] IsGroupB comprova si el valor és del Grup B
+func (sSrc RangeF64) IsGroupB() bool {
+	return (F64ToU64(sSrc.value) & GroupMask) == GroupBMask
+}
+
+// [GPT] IsGroupC comprova si el valor és del Grup C
+func (sSrc RangeF64) IsGroupC() bool {
+	return (F64ToU64(sSrc.value) & GroupMask) == GroupCMask
+}
+
+// [GPT] IsGroupD comprova si el valor és del Grup D
+func (sSrc RangeF64) IsGroupD() bool {
+	return (F64ToU64(sSrc.value) & GroupMask) == GroupDMask
+}
+
+// [GPT] IsGroupE comprova si el valor és del Grup E
+func (sSrc RangeF64) IsGroupE() bool {
+	return (F64ToU64(sSrc.value) & GroupMask) == GroupEMask
 }
 
 // Operacions
