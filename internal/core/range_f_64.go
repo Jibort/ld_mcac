@@ -14,89 +14,124 @@ type RangeF64 struct {
 	value float64
 }
 
-// GETTERS/SETTERS --------------------
-func (sSrc RangeF64) GetValue() float64 { return sSrc.value }
-
 // CONSTRUCTORS -----------------------
-// Constructor amb grup.
-func NewRangeF64WithGroup(value float64, pGroup int) RangeF64 {
-	bits := math.Float64bits(value)
-	exponent := uint64(0)
-
-	switch pGroup {
-	case 1: // Grup A
-		exponent = 1023 // o 1022
-	case 2: // Grup B
-		exponent = 1024
-	case 3: // Grup C
-		exponent = 1025
-	case 4: // Grup D
-		exponent = 1026
-	default:
-		// Manejar error o assignar un valor per defecte
-	}
-
-	// Ajusta els bits de l'exponent en la representació binària
-	bits = (bits &^ (0x7FF << 52)) | (exponent << 52)
-
-	return RangeF64{value: math.Float64frombits(bits)}
-}
-
+// Constructor general a partir d'un valor float64 (64bits).
 func NewRangeF64(pF64 float64) RangeF64 {
 	return RangeF64{value: pF64}
 }
 
-func NewRangeU64(pU64 uint64) (rF64 RangeF64) {
+// Constructor a partir d'un uint64 (64bits).
+func NewRangeF64FromU64(pU64 uint64) RangeF64 {
+	// fmt.Printf("NewRangeU64: Bits rebuts: %064b\n", pU64)
 	return RangeF64{value: U64ToF64(pU64)}
 }
 
-// Constructor general a partir d'un float64.
-func NewRangeF64__(pVal float64) (rF64 RangeF64) {
-	// Primer comprovem els límits
-	absVal := math.Abs(pVal)
-	if absVal >= 1.0 || absVal > (1.0-SmallThreshold64) {
-		return NewRangeF64Saturated(pVal >= 0)
-	}
-
-	bits := F64ToU64(pVal)
-	if (bits & GroupMask) != GroupAMask {
-		return RangeF64{value: pVal}
-	}
-
-	if absVal < SmallThreshold64 {
-		return NewRangeF64Zero()
-	}
-
-	return RangeF64{value: Quantize64(pVal)}
-}
-
-// Constructor de RangeF64 per a 0.000_000_000_000_000
+// Constructor de RangeF64 per a 0.0.
 func NewRangeF64Zero() RangeF64 {
-	return NewRangeF64WithGroup(float64(0.0), 1)
-}
-
-// Constructors de valors especials
-func NewRangeF64Saturated(positive bool) RangeF64 {
-	var bits uint64
-	if positive {
-		bits = GroupDMask | SaturationMask
-	} else {
-		bits = SignMask | GroupDMask | SaturationMask
-	}
-	return RangeF64{value: U64ToF64(bits)}
-}
-
-func NewRangeF64Infinite(positive bool) RangeF64 {
-	bits := GroupBMask | SubgroupInfMask
-	if !positive {
-		bits |= SignMask
-	}
-	return RangeF64{value: U64ToF64(bits)} // Retornem directament sense usar NewRangeF64
+	return NewRangeF64FromU64(IEEE754ZeroBits)
 }
 
 func NewRangeF64Null() RangeF64 {
 	bits := GroupBMask | SubgroupNullMask
-	return RangeF64{value: U64ToF64(bits)}
+	return NewRangeF64FromU64(bits)
+}
+
+// Crea un valor RangeF64 per a errors, codificant el codi d'error i el valor erroni.
+func NewRangeF64Error(pCode int, pErroneousValue float64) RangeF64 {
+	groupBits := GroupBMask                                    // Grup B
+	subgroupBits := SubgroupNullMask                           // Subgrup genèric
+	errorCodeBits := uint64(pCode) << 48                       // Desplaçar el codi d'error a la seva posició
+	valueBits := math.Float64bits(pErroneousValue) & ValueMask // Valor associat a l'error
+
+	// Combinar els bits
+	finalBits := groupBits | subgroupBits | errorCodeBits | valueBits
+
+	return NewRangeF64FromU64(finalBits)
+}
+
+// Crea valors saturats
+func NewRangeF64Saturated(pVal float64) RangeF64 {
+	// Converteix el valor proporcionat a bits IEEE 754
+	bits := F64ToU64(pVal)
+
+	// Força que el valor estigui dins del grup saturat (Grup D)
+	bits = (bits &^ GroupMask) | GroupDMask
+
+	// Limita el valor a ±1.0
+	if pVal > 0 {
+		bits |= SaturationMask // Saturació positiva
+	} else {
+		bits |= SignMask | SaturationMask // Saturació negativa
+	}
+
+	// Retorna un RangeF64 utilitzant el constructor base
+	return NewRangeF64FromU64(bits)
+}
+
+// Crea ±infinit
+func NewRangeF64Infinite(pIsPositive bool) RangeF64 {
+	bits := GroupBMask | SubgroupInfMask
+	if !pIsPositive {
+		bits |= SignMask
+	}
+	return NewRangeF64FromU64(bits)
+}
+
+// GETTERS/SETTERS --------------------
+func (sSrc RangeF64) GetF64Value() float64 { return sSrc.value }
+func (sSrc RangeF64) SetF64Value(pVal float64) RangeIntf {
+	sSrc.value = pVal
+	return sSrc
+}
+func (sSrc RangeF64) GetU64Value() uint64 { return F64ToU64(sSrc.value) }
+func (sSrc RangeF64) SetU64Value(pVal uint64) RangeIntf {
+	sSrc.value = U64ToF64(pVal)
+	return sSrc
+}
+func (sSrc RangeF64) GetPercentage() (float64, bool) {
+	bits := F64ToU64(sSrc.value)
+
+	// Comprova si és del Grup C i Subgrup C3
+	if (bits&GroupMask) != GroupCMask || (bits&SubgroupMask) != SubGroupC3Mask {
+		return 0.0, false
+	}
+
+	// Extreu els bits del valor
+	valueBits := bits & ValueMask
+	decodedValue := float64(valueBits) / (1 << 52)
+
+	// Comprova si el valor extret està dins del rang vàlid [0.0, 1.0]
+	if decodedValue < 0.0 || decodedValue > 1.0 {
+		return 0.0, false
+	}
+
+	decodedValue = math.Round(float64(valueBits)/(1<<52)*1000000000) / 1000000000
+	return decodedValue, true
+}
+func (sSrc RangeF64) SetPercentage(pVal float64) RangeIntf {
+	// TODO: Cal implementar la funció.
+	return sSrc
+}
+
+func NewRangeF64Percentage(Pf64 float64) RangeF64 {
+	// Valida que el percentatge està dins del rang [0.0, 1.0]
+	if Pf64 < 0.0 || Pf64 > 1.0 {
+		return NewRangeF64Error(ERR_INVALID_PERCENTAGE, Pf64)
+	}
+
+	// Converteix el percentatge en valor binari brut
+	// valueBits := uint64(pct * (1 << 52)) // Escala a 2^-52
+	valueBits := uint64(math.Round(Pf64 * (1 << 52)))
+	// fmt.Printf("valueBits abans 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
+	valueBits &= ValueMask // Manté només els bits del valor
+	//  fmt.Printf("valueBits després 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
+
+	// Configura el Grup C i Subgrup C3
+	finalBits := GroupCMask | SubGroupC3Mask | valueBits
+	// fmt.Printf("finalBits després de combinar màscares: %064b\n", finalBits)
+	// fmt.Printf("valueBits abans d'enviar: %064b\n", valueBits)
+
+	return NewRangeF64FromU64(finalBits)
 }
 
 // INTERFÍCIE 'RangeIntf' -------------
@@ -143,7 +178,7 @@ func (sSrc RangeF64) GreaterOrEqualThan(pOther RangeIntf) bool {
 // Valors especials.
 func (sSrc RangeF64) IsNullValue() bool {
 	bits := F64ToU64(sSrc.value)
-	return (bits & (MetaMask | SubgroupMask)) == (GroupBMask | SubgroupNullMask)
+	return (bits & (GroupMask | SubgroupMask)) == (GroupBMask | SubgroupNullMask)
 }
 
 func (sSrc RangeF64) IsInfinitePos() bool {
@@ -163,22 +198,16 @@ func (sSrc RangeF64) IsInfiniteNeg() bool {
 func (sSrc RangeF64) IsGroupA() bool {
 	bits := F64ToU64(sSrc.value)
 
-	// Comprova si és zero (normalitzant el signe)
-	if ((bits << 1) >> 1) == 0 {
-		return true
-	}
+	bits = ((bits << 1) >> 63)
+	return bits == 0
 
-	// Casos especials: infinits i NaN
-	if (bits&MetaMask) == 0x7FF0000000000000 || (bits&MetaMask) == 0xFFF0000000000000 {
-		return false // +∞ o -∞
-	}
-	if (bits&MetaMask) == 0x7FF0000000000000 && (bits&ValueMask) != 0 {
-		return false // NaN
-	}
+	// // Exclou valors amb el bit de signe
+	// if (bits & SignMask) != 0 {
+	// 	return false
+	// }
 
-	// Elimina el bit de signe i verifica que pertany al Grup A
-	unsignedBits := bits & ^SignMask
-	return (unsignedBits&GroupMask) == GroupAMask && (unsignedBits&MetaMask) >= (1022<<52) && (unsignedBits&MetaMask) <= (1023<<52)
+	// // Verifica que pertany exclusivament al Grup A
+	// return (bits & GroupMask) == GroupAMask
 }
 
 // [GPT] IsGroupB comprova si el valor és del Grup B
@@ -188,7 +217,8 @@ func (sSrc RangeF64) IsGroupB() bool {
 
 // [GPT] IsGroupC comprova si el valor és del Grup C
 func (sSrc RangeF64) IsGroupC() bool {
-	return (F64ToU64(sSrc.value) & GroupMask) == GroupCMask
+	bits := F64ToU64(sSrc.value)
+	return (bits & GroupMask) == GroupCMask
 }
 
 // [GPT] IsGroupD comprova si el valor és del Grup D
@@ -196,25 +226,50 @@ func (sSrc RangeF64) IsGroupD() bool {
 	return (F64ToU64(sSrc.value) & GroupMask) == GroupDMask
 }
 
-// [GPT] IsGroupE comprova si el valor és del Grup E
-func (sSrc RangeF64) IsGroupE() bool {
-	return (F64ToU64(sSrc.value) & GroupMask) == GroupEMask
-}
+// // [GPT] IsGroupE comprova si el valor és del Grup E
+// func (sSrc RangeF64) IsGroupE() bool {
+// 	return (F64ToU64(sSrc.value) & GroupMask) == GroupEMask
+// }
 
 // Operacions
 // Suma dos valors Range mantenint el resultat dins [-1.0, +1.0]
-func (sSrc RangeF64) Add(pOther RangeIntf) RangeIntf {
-	result := sSrc.value + pOther.ValueF64()
-
-	// Si el resultat supera els límits, retornem valor saturat
-	if result > 1.0 {
-		return NewRangeF64Saturated(true)
-	}
-	if result < -1.0 {
-		return NewRangeF64Saturated(false)
+func (sF64 RangeF64) Add(pOther RangeIntf) RangeIntf {
+	// Verifica si qualsevol dels valors és null
+	if sF64.IsNullValue() || pOther.IsNullValue() {
+		return NewRangeF64Error(ERR_NULL_VALUE, sF64.GetF64Value())
 	}
 
-	return NewRangeF64(result)
+	// Verifica que lhs és del Grup A
+	if sF64.IsGroupA() {
+		// Si rhs és del Grup C (Percentatge)
+		if pOther.IsGroupC() {
+			rhsValue, valid := pOther.GetPercentage()
+			// fmt.Printf("Extracted Percentage: %f (Valid: %v)\n", rhsValue, valid)
+			if !valid {
+				return NewRangeF64(math.NaN()) // Fora de rang: retorna NaN
+			}
+
+			// Escalatge correcte: lhs + (lhs * percentatge)
+			lhsValue := sF64.GetF64Value()
+			scaledValue := lhsValue + (lhsValue * rhsValue)
+
+			// Comprova límits de saturació
+			if scaledValue > 1.0 {
+				return NewRangeF64Saturated(1.0)
+			}
+			if scaledValue < -1.0 {
+				return NewRangeF64Saturated(-1.0)
+			}
+
+			return NewRangeF64(scaledValue)
+		}
+
+		// Si rhs no és vàlid, retorna NaN
+		return NewRangeF64(math.NaN())
+	}
+
+	// Retorna un error si els grups són incompatibles
+	return NewRangeF64Error(ERR_INVALID_ADD_OPERATION, pOther.ValueF64())
 }
 
 // Resta dos valors Range mantenint el resultat dins [-1.0, +1.0]
@@ -223,10 +278,10 @@ func (sSrc RangeF64) Sub(pOther RangeIntf) RangeIntf {
 
 	// Si el resultat supera els límits, retornem valor saturat
 	if result > 1.0 {
-		return NewRangeF64Saturated(true)
+		return NewRangeF64Saturated(result)
 	}
 	if result < -1.0 {
-		return NewRangeF64Saturated(false)
+		return NewRangeF64Saturated(result)
 	}
 
 	return NewRangeF64(result)
@@ -238,10 +293,10 @@ func (sSrc RangeF64) Mul(pOther RangeIntf) RangeIntf {
 
 	// Si el resultat supera els límits, retornem valor saturat
 	if result > 1.0 {
-		return NewRangeF64Saturated(true)
+		return NewRangeF64Saturated(result)
 	}
 	if result < -1.0 {
-		return NewRangeF64Saturated(false)
+		return NewRangeF64Saturated(result)
 	}
 
 	return NewRangeF64(result)
@@ -258,10 +313,10 @@ func (sSrc RangeF64) Div(pOther RangeIntf) (RangeIntf, error) {
 
 	// Si el resultat supera els límits, retornem valor saturat
 	if result > 1.0 {
-		return NewRangeF64Saturated(true), nil
+		return NewRangeF64Saturated(result), nil
 	}
 	if result < -1.0 {
-		return NewRangeF64Saturated(false), nil
+		return NewRangeF64Saturated(result), nil
 	}
 
 	return NewRangeF64(result), nil
@@ -316,4 +371,30 @@ func (sSrc RangeF64) IsSaturatedPos() bool {
 func (sSrc RangeF64) IsSaturatedNeg() bool {
 	bits := F64ToU64(sSrc.value)
 	return (bits & (SignMask | GroupMask)) == (SignMask | GroupDMask) // Amb signe + Group D
+}
+
+// Gestió d'errors...
+// Retorna cert només si el RangeF64 representa un error.
+func (sSrc RangeF64) IsError() bool {
+	bits := F64ToU64(sSrc.value)
+	return (bits & GroupMask) == GroupBMask
+}
+
+// Retorna el codi d'error a partir dels bits definits.
+func (sSrc RangeF64) ErrorCode() int {
+	bits := F64ToU64(sSrc.value)
+	if !sSrc.IsError() {
+		return 0 // No és un error
+	}
+	return int((bits >> 48) & 0xFFFF) // Bits 48-63
+}
+
+// Retorna la resta de bits per a poder incorporar un paràmetre a l'error.
+func (sSrc RangeF64) ErroneousValue() float64 {
+	bits := F64ToU64(sSrc.value)
+	if !sSrc.IsError() {
+		return 0 // No és un error
+	}
+	valueBits := bits & ValueMask
+	return U64ToF64(valueBits)
 }

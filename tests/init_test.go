@@ -27,13 +27,13 @@ func TestNewSpecialSymbols(t *testing.T) {
 	for symbol, expected := range specialSymbols {
 		// Codificació
 		encoded := core.EncodeSymbol(symbol)
-		got := core.F64ToU64(encoded.GetValue())
+		got := core.F64ToU64(encoded.GetF64Value())
 		if got != expected {
 			t.Errorf("EncodeSymbol failed for symbol: %c, expected: %v, got: %v", symbol, expected, got)
 		}
 
 		// Decodificació
-		decoded := core.DecodeSymbol(core.NewRangeU64(expected))
+		decoded := core.DecodeSymbol(core.NewRangeF64FromU64(expected))
 		if decoded != symbol {
 			t.Errorf("DecodeSymbol failed for ID: %v, expected symbol: %c, got: %c", expected, symbol, decoded)
 		}
@@ -60,7 +60,7 @@ func TestEncodeDecodeSymbol(t *testing.T) {
 
 	for symbol, expected := range specialSymbols {
 		encoded := core.EncodeSymbol(symbol)
-		got := core.F64ToU64(encoded.GetValue())
+		got := core.F64ToU64(encoded.GetF64Value())
 		t.Logf("Symbol: %c, GroupCMask: %x, SubGroupC3Mask: %x, ID: %x, Got: %x",
 			symbol, core.GroupCMask, core.SubGroupC3Mask, core.SymbolToID[symbol], got)
 
@@ -68,7 +68,7 @@ func TestEncodeDecodeSymbol(t *testing.T) {
 			t.Errorf("EncodeSymbol failed for symbol: %c, expected: %v, got: %v", symbol, expected, got)
 		}
 
-		decoded := core.DecodeSymbol(core.NewRangeU64(expected))
+		decoded := core.DecodeSymbol(core.NewRangeF64FromU64(expected))
 		if decoded != symbol {
 			t.Errorf("DecodeSymbol failed for ID: %v, expected symbol: %c, got: %c", expected, symbol, decoded)
 		}

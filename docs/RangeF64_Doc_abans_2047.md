@@ -46,67 +46,53 @@ El fet que al format F32 només càpiguen 4 grups (2 bits) m'ha fet decidir redu
         - En aquest subgrup la representació del signe i dels primers 52b (51-0) corresponen al signe i la mantissa en el Grup A.
         - D'aquesta forma es pot mantenir tant la marca de saturació per a tot el rang [-1.0,+1.0] com la mateixa representació dels valors en ambdós grups.
 
-### **Group C (Tokens):** 0bp1 + '01'g (grup C) + 33p + 27t
-- **Estructura**: 2b 'p1' + '01'g grup C + 33 bits a 'x' + 27bits de Token Id (x indefinit).
-- **Funció**: Permet transportar l'identificador clau d'un token únic associat a un percentatge de 0.000000% a 1.000000%
-- **Identificació:** Bits 63-60 = 0bS101...
-    - 'p' Tots els bits p's (1+33) determinen un percentatge amb 5 o 6 dígits decimanls de precisió.
-    - 27t són els 27bits unsigned que identifiquen de forma única el token.
-    - S'escull la xifra de 27bits perquè després d'una cerca en diversos tipus de LLMs trobem que fins i tot els de gran tamany fan servir molts menys tokens:
-        1. _Llama3.2_: al voltant dels 50m tokens individuals.
-        1. _Claude_: al voltant dels 100m tokens individuals.
-        2. _Gemini_: al voltant dels 150m tokens individuals.
-        3. _ChatGPT_: informació no pública a partir de GPT3.5, els previs pressumptament a partir de 50m amb un màxim (calculat a partir del tamany del seu context) 128m.
-    - El fet de disposar de més de 134M d'identificadors de tokens independents ens pot permetre afegir certa estructuració i encara és compatible amb els formats Range de 32 bits.
+
+### **Group C (Tokens i Percentatges):** 0bp1 + '01'g (grup C) + subgrup + dades
+- **Estructura General**: 2b 'p1' + '01'g grup C + subgrup + dades (segons subgrup).
+- **Funció**: Representa percentatges, rangs de percentatges, o identificadors clau únics associats a tokens.
+- **Subgrups**:
+  - **Subgrup 00 (Percentatge):**
+    - Representa un percentatge pur entre 0.0 i 1.0.
+    - **Estructura**: 33 bits per al percentatge com a fracció decimal (rang 0.000000% - 100.000000%).
+    - **Exemple**: 50% es codifica com `0bp1_00_100000_000000_...`.
+
+  - **Subgrup 01 (Rang de Percentatges):**
+    - Representa un rang de percentatges amb mínim i màxim.
+    - **Estructura**:
+      - 16 bits inicials: Percentatge mínim.
+      - 16 bits següents: Percentatge màxim.
+      - Exemple: Rang 10%-90% es codifica com `0bp1_01_00011001_01011110_...`.
+
+  - **Subgrup 10 (Token Clàssic):**
+    - Identifica un token únic associat.
+    - **Estructura**: 33 bits per dades del token i 27 bits d'identificador.
+
+  - **Subgrup 11 (Reservat):**
+    - Espai reservat per a futures extensions.
+
+- **Funcions**:
+  - **Creació de Percentatge**: `NewPercentage(float64) -> RangeF64`.
+  - **Creació de Rang de Percentatges**: `NewPercentageRange(float64, float64) -> RangeF64`.
+  - **Escalatge**: `Scale(RangeF64, float64) -> RangeF64`.
+  - **Validació**:
+    - `IsPercentage(RangeF64) -> bool`.
+    - `IsWithinRange(RangeF64, RangeF64) -> bool`.
+
+Aquest subgrup permet gestionar valors percentuals i els amplia amb rangs, tot mantenint compatibilitat amb tokens clàssics.
 
 ### **Group D (Meta significats):** 0bm1 + '10'g (grup D) + 60m
 - **Estructura**: 2b 'm1' + '10'g grup D + 61 bits de meta valors.
-- **Per a expansions**: Els elements d'aquest grup es reserven per a futures extensions. El model cognitiu que intentem implementar (MCAC) inclou molts conceptes abstractes que es poden arribar a codificar en aquest grup.
+- **Funció**: Els metavalors encara no estan definits.
+- **Identificació:** Bits 63-60 = 0bm110...
+    - 'm' Tots els bits p's (1+60) Determinaran metavalors.
 
 ### **Group E (extensió F64):** 0b?1 + '11'g (grup E) + 60?
 - **Estructura**: 2b '?1' + '11'g grup E + 60 bits '?' meta valors.
-- **Per a expansions de 64 bits**: Els elements d'aquest grup es reserven per a futures extensions específiques per a Ranges de 64 bits que encara no podem identificar.
-
-## Verificació de Precisió
-Per entendre com la precisió es manté o es degrada en diferents formats de representació numèrica (F64, F32, etc.), podem comparar el nombre de dígits decimals significatius que cadascun pot representar. Aquesta informació és clau per triar el format adequat segons les necessitats del projecte.
-
-### Comparació de Precisió per Format
-[^1]: BdM = Bits de Mantissa
-[^2]: DdS = Dígits Decimals Significatius
-[^3]: RdR = Rang de Representació
-
-| Format    | BdM[^1]   | DdS[^2] | RdR[^3] |
-| :-----    | :-----: | :--------: | :----- |
-| F64 | 52b | 15-17	| ±10e±308 |
-| F32 | 23b | 6-9   | ±10e±38  | 
-| F16 | 10b | 3-4   | ±10e±5   | 
-| Custom (27-bit mantissa) | 27b | 8-10 | Adaptable segons implementació específica |
-
-### Observacions
-* F64:
-    Ideal per a càlculs científics i financers que requereixen una precisió extrema.
-    Manté fins a 15-17 dígits decimals significatius, però consumeix més memòria i pot ser més lent.
-* F32:
-    Ofereix una bona relació entre precisió i eficiència en recursos.
-    Es pot utilitzar en xarxes neuronals i aplicacions gràfiques on una precisió més baixa és acceptable.
-* F16:
-    Adequat per a aplicacions amb recursos molt limitats, com dispositius mòbils o sensors.
-    La baixa precisió limita el seu ús en càlculs complexos.
-* Custom (27-bit mantissa):
-    El format que proposem per al grup C (tokens) se situa entre F32 i F64.
-    Amb 27 bits, manté una precisió comparable a 8-10 dígits decimals, suficient per moltes aplicacions en xarxes neuronals o processament de dades.
-
-### Exemple Numèric
-* Per un valor com 
-0.1234567890123456:
-    - F64 el representarà com: 
-        - 0.1234567890123456 (precisió completa).
-        - F32 el representarà com: 
-        - 0.12345679 (truncament després de 6-9 dígits).
-    - F16 el representarà com: 
-        - 0.1234 (truncament després de 3-4 dígits).
-    - 27-bit mantissa el representarà com: 
-        - 0.1234567890 (truncament després de 8-10 dígits).
+- **Funció**: 
+    - Aquest grup només està disponible als tipus Range?64 perquè no té espai als tipus de 32 bits.
+    - La seva funció està per determinar si finalment es fa servir.
+- **Identificació:** Bits 63-60 = 0bm111...
+    - 'm' Tots els bits m's (1+60) per a determinar si cal.
 
 ## Relació de símbols
 - Espais i control

@@ -90,8 +90,11 @@ func F64ToB64(pFt float64) string {
 
 // U64 a ..............................
 // Conversió des de uint64 a float64
-func U64ToF64(pF64 uint64) float64 {
-	return *(*float64)(unsafe.Pointer(&pF64))
+func U64ToF64(pU64 uint64) float64 {
+	if !ValidateIEEE754(pU64) {
+		panic(fmt.Sprintf("Invalid IEEE 754 representation: %064b", pU64))
+	}
+	return *(*float64)(unsafe.Pointer(&pU64))
 }
 
 func U64ToB64(pVal uint64) string {
@@ -109,6 +112,18 @@ func U64ToB64(pVal uint64) string {
 
 	// Retornar la cadena resultant, eliminant l'espai final
 	return strings.TrimSpace(builder.String())
+}
+
+func ValidateIEEE754(pU64 uint64) bool {
+	// Comprova si els bits representen un valor vàlid en format IEEE 754
+	exponent := (pU64 >> 52) & 0x7FF
+	mantissa := pU64 & 0xFFFFFFFFFFFFF
+
+	// El valor ha de tenir un exponent vàlid (diferent de 0x7FF que indicaria NaN o infinit)
+	if exponent == 0x7FF && mantissa != 0 {
+		return false // És un NaN
+	}
+	return true
 }
 
 // Exponents.
