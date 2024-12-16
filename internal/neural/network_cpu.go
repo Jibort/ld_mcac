@@ -31,7 +31,7 @@ func NewNetworkCPU(pConfigPath string) (*NetworkCPU, error) {
 		neurons := make([]Neuron, layerConfig.Neurons)
 		for j := 0; j < layerConfig.Neurons; j++ {
 			neurons[j] = Neuron{
-				Bias:   core.NewRangeF64(0),
+				Bias:   core.NewRangeF64(0.0),
 				FNL:    createActivationFunction(layerConfig.Activation),
 				Inputs: make([]*Synapse, 0),
 			}
@@ -63,16 +63,16 @@ func NewNetworkCPU(pConfigPath string) (*NetworkCPU, error) {
 }
 
 // AddLayer afegeix una capa a la xarxa i actualitza les instàncies.
-func (n *NetworkCPU) AddLayer(pLayer Layer) {
-	n.layers = append(n.layers, pLayer)
-	n.neurons = append(n.neurons, pLayer.Neurons())
-	n.synapses = append(n.synapses, pLayer.Synapses())
+func (sNet *NetworkCPU) AddLayer(pLayer Layer) {
+	sNet.layers = append(sNet.layers, pLayer)
+	sNet.neurons = append(sNet.neurons, pLayer.Neurons())
+	sNet.synapses = append(sNet.synapses, pLayer.Synapses())
 }
 
 // Forward executa la propagació endavant.
-func (n *NetworkCPU) Forward(inputs []core.RangeIntf) []core.RangeIntf {
+func (sNet *NetworkCPU) Forward(inputs []core.RangeIntf) []core.RangeIntf {
 	currentInputs := inputs
-	for _, layer := range n.layers {
+	for _, layer := range sNet.layers {
 		currentInputs = layer.Forward(currentInputs)
 	}
 	return currentInputs

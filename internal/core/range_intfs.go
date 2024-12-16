@@ -85,6 +85,9 @@ type RangeIntf interface {
 	IsInfinitePos() bool
 	IsInfiniteNeg() bool
 	IsNullValue() bool
+	IsPadding() bool
+	IsPaddingStart() bool
+	IsPaddingEnd() bool
 
 	// Grups
 	IsGroupA() bool
@@ -123,6 +126,11 @@ type RangeIntf interface {
 	// Helpers opcionals
 	ValueF64() float64 // Retorna el valor com a float64
 	ValueF32() float32 // Retorna el valor com a float32
+
+	// Símbols
+	IsSymbol() bool // Retorna cert només si la instància defineix un símbol
+	ToSymbol() rune // Retorna el símbol RangeIntf si és un símbol (0 en cas contrari)
+
 	// Altres segons necessitats
 }
 

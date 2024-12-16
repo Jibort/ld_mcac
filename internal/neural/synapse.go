@@ -6,12 +6,11 @@ package neural
 import "github.com/jibort/ld_mcac/internal/core"
 
 type Synapse struct {
-    Weight *core.RangeIntf
-    Input  *Neuron
-}
+	Weight core.RangeIntf
+	Input  *Neuron
 }
 
-func NewSynapse(pWeight core.RangeIntf, pInput func() core.RangeIntf) *Synapse {
+func NewSynapse(pWeight core.RangeIntf, pInput *Neuron) *Synapse {
 	return &Synapse{
 		Weight: pWeight,
 		Input:  pInput,
@@ -19,5 +18,5 @@ func NewSynapse(pWeight core.RangeIntf, pInput func() core.RangeIntf) *Synapse {
 }
 
 func (sSyn *Synapse) Compute(pInputs []core.RangeIntf) core.RangeIntf {
-    return core.NewRangeF64(sSyn.Weight.GetF64Value() * pInputs[0].GetF64Value())
+	return core.NewRangeF64(sSyn.Weight.GetF64Value() * pInputs[0].GetF64Value())
 }

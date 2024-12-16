@@ -32,6 +32,13 @@ const (
 	SubgroupInfMask  = uint64(0b00000110_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // Subgrup B (infinit)
 )
 
+// Màscares de padding.
+const (
+	PaddingStartMask = uint64(0b01000100_00000000_00000000_00000000_00000000_00000000_11111111_00001010) // rune(0xFFFA): 0xFF0A, // Paddind d'inici
+	PaddingEndMask   = uint64(0b11000100_00000000_00000000_00000000_00000000_00000000_11111111_00001011) // rune(0xFFFB): 0xFF0B, // Paddind de final
+	PaddingMask      = uint64(0b01000100_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // rune(0xFFFB): 0xFF0B, // Paddind de final
+)
+
 // Desplaçaments de bits
 const (
 	MetaShift = 48 // Bits a desplaçar per accedir a les metadades

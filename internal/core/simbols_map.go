@@ -84,6 +84,8 @@ var SymbolToID = map[rune]uint64{
 	'¬': 0x680, '~': 0x690, '€': 0x6A0,
 
 	// Elements Especials
+	rune(0xFFFA): 0xFF0A, // Paddind d'inici
+	rune(0xFFFB): 0xFF0B, // Paddind de final
 	rune(0xFFFC): 0xFFF3, // Nul
 	rune(0xFFFD): 0xFFF0, // Error
 	rune(0xFFFE): 0xFFF1, // Desconegut

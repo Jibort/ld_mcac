@@ -77,6 +77,46 @@ func NewRangeF64Infinite(pIsPositive bool) RangeF64 {
 	return NewRangeF64FromU64(bits)
 }
 
+// Crea un padding
+func NewRangeF64Padding(pEnd *bool) RangeF64 {
+	if pEnd == nil {
+		return NewRangeF64FromU64(PaddingMask)
+	} else if *pEnd {
+		return NewRangeF64FromU64(PaddingStartMask)
+	} else {
+		return NewRangeF64FromU64(PaddingEndMask)
+	}
+}
+
+// Crea un símbol
+func NewRangeF64FromSymbol(pSym rune) RangeF64 {
+	sym := uint64(pSym)
+	u64 := GroupCMask | GroupCMask | sym
+
+	return NewRangeF64FromU64(u64)
+}
+
+func NewRangeF64Percentage(Pf64 float64) RangeF64 {
+	// Valida que el percentatge està dins del rang [0.0, 1.0]
+	if Pf64 < 0.0 || Pf64 > 1.0 {
+		return NewRangeF64Error(ERR_INVALID_PERCENTAGE, Pf64)
+	}
+
+	// Converteix el percentatge en valor binari brut
+	// valueBits := uint64(pct * (1 << 52)) // Escala a 2^-52
+	valueBits := uint64(math.Round(Pf64 * (1 << 52)))
+	// fmt.Printf("valueBits abans 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
+	valueBits &= ValueMask // Manté només els bits del valor
+	//  fmt.Printf("valueBits després 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
+
+	// Configura el Grup C i Subgrup C3
+	finalBits := GroupCMask | SubGroupC3Mask | valueBits
+	// fmt.Printf("finalBits després de combinar màscares: %064b\n", finalBits)
+	// fmt.Printf("valueBits abans d'enviar: %064b\n", valueBits)
+
+	return NewRangeF64FromU64(finalBits)
+}
+
 // GETTERS/SETTERS --------------------
 func (sSrc RangeF64) GetF64Value() float64 { return sSrc.value }
 func (sSrc RangeF64) SetF64Value(pVal float64) RangeIntf {
@@ -111,27 +151,6 @@ func (sSrc RangeF64) GetPercentage() (float64, bool) {
 func (sSrc RangeF64) SetPercentage(pVal float64) RangeIntf {
 	// TODO: Cal implementar la funció.
 	return sSrc
-}
-
-func NewRangeF64Percentage(Pf64 float64) RangeF64 {
-	// Valida que el percentatge està dins del rang [0.0, 1.0]
-	if Pf64 < 0.0 || Pf64 > 1.0 {
-		return NewRangeF64Error(ERR_INVALID_PERCENTAGE, Pf64)
-	}
-
-	// Converteix el percentatge en valor binari brut
-	// valueBits := uint64(pct * (1 << 52)) // Escala a 2^-52
-	valueBits := uint64(math.Round(Pf64 * (1 << 52)))
-	// fmt.Printf("valueBits abans 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
-	valueBits &= ValueMask // Manté només els bits del valor
-	//  fmt.Printf("valueBits després 'AND' > pct: %f, raw_value_bits: %d, valueBits: %d\n", pct, uint64(pct*(1<<52)), valueBits)
-
-	// Configura el Grup C i Subgrup C3
-	finalBits := GroupCMask | SubGroupC3Mask | valueBits
-	// fmt.Printf("finalBits després de combinar màscares: %064b\n", finalBits)
-	// fmt.Printf("valueBits abans d'enviar: %064b\n", valueBits)
-
-	return NewRangeF64FromU64(finalBits)
 }
 
 // INTERFÍCIE 'RangeIntf' -------------
@@ -175,7 +194,7 @@ func (sSrc RangeF64) GreaterOrEqualThan(pOther RangeIntf) bool {
 	return sSrc.GreaterThan(pOther) || sSrc.Equals(pOther)
 }
 
-// Valors especials.
+// Funcions Is....()
 func (sSrc RangeF64) IsNullValue() bool {
 	bits := F64ToU64(sSrc.value)
 	return (bits & (GroupMask | SubgroupMask)) == (GroupBMask | SubgroupNullMask)
@@ -191,6 +210,28 @@ func (sSrc RangeF64) IsInfiniteNeg() bool {
 	bits := F64ToU64(sSrc.value)
 	expectedBits := SignMask | GroupBMask | SubgroupInfMask
 	return bits == expectedBits
+}
+
+func (sSrc RangeF64) IsPadding() bool      { return sSrc.IsPaddingStart() || sSrc.IsPaddingEnd() }
+func (sSrc RangeF64) IsPaddingStart() bool { return sSrc.GetU64Value() == PaddingStartMask }
+func (sSrc RangeF64) IsPaddingEnd() bool   { return sSrc.GetU64Value() == PaddingEndMask }
+
+// Símbols
+func (sSrc RangeF64) IsSymbol() bool {
+	u64 := sSrc.GetU64Value() & 0b11111100_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+	u64 = u64 >> 56
+	return u64&0b11000000 == 0b11000000
+}
+
+func (sSrc RangeF64) ToSymbol() rune {
+	var rn rune = 0
+
+	if sSrc.IsSymbol() {
+		u64 := sSrc.GetU64Value() & 0b00000000_00000000_00000000_00000000_00000000_00000000_11111111_11111111
+		rn = rune(u64)
+	}
+
+	return rn
 }
 
 // Grups.

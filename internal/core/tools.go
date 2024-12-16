@@ -11,6 +11,14 @@ import (
 	"unsafe"
 )
 
+var (
+	c_true  = true
+	c_false = false
+)
+
+func TruePointer() *bool  { return &c_true }
+func FalsePointer() *bool { return &c_false }
+
 // QUANTITZACIÓ -----------------------
 // Assegura que els decimals mantenen la precisió desitjada.
 func Quantize64(pVal float64) float64 {
