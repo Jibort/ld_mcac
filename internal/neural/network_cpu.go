@@ -3,7 +3,16 @@
 
 package neural
 
-import "github.com/jibort/ld_mcac/internal/core"
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+
+	"github.com/jibort/ld_mcac/internal/core"
+	"github.com/jibort/ld_mcac/internal/neural/FNs"
+)
 
 type NetworkCPU struct {
 	layers   []Layer
@@ -12,62 +21,99 @@ type NetworkCPU struct {
 }
 
 // Crea una nova xarxa buida.
-func NewNetworkCPU(pConfigPath string) (*NetworkCPU, error) {
-	// Llegeix i parseja el fitxer descriptiu.
-	config, err := parseConfig(pConfigPath)
+func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
+	// Obrim i deserialitzem el fitxer .ndl
+	file, err := os.Open(ndlPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error opening .ndl file: %v", err)
+	}
+	defer file.Close()
+
+	var ndlConfig struct {
+		Name   string `json:"name"`
+		Layers []int  `json:"layers"`
+		Links  []struct {
+			From string `json:"from"`
+			To   string `json:"to"`
+		} `json:"links"`
+	}
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&ndlConfig); err != nil {
+		return nil, fmt.Errorf("error decoding .ndl file: %v", err)
 	}
 
-	// Crea la xarxa a partir del fitxer.
+	// Inicialitzem la xarxa
 	network := &NetworkCPU{
-		layers:   make([]Layer, len(config.Layers)),
-		neurons:  make([][]Neuron, len(config.Layers)),
-		synapses: make([][][]Synapse, len(config.Layers)-1),
+		neurons:  make([][]Neuron, len(ndlConfig.Layers)),
+		synapses: make([][][]Synapse, len(ndlConfig.Layers)-1),
 	}
 
-	// Crea les capes i neurones.
-	for i, layerConfig := range config.Layers {
-		neurons := make([]Neuron, layerConfig.Neurons)
-		for j := 0; j < layerConfig.Neurons; j++ {
-			neurons[j] = Neuron{
-				Bias:   core.NewRangeF64(0.0),
-				FNL:    createActivationFunction(layerConfig.Activation),
-				Inputs: make([]*Synapse, 0),
-			}
+	// Creem les capes i neurones
+	for _, neuronCount := range ndlConfig.Layers {
+		layer := Layer{
+			neurons:  make([]*Neuron, neuronCount),
+			synapses: make([][]*Synapse, neuronCount),
 		}
-		network.neurons[i] = neurons
-		network.layers[i] = Layer{neurons: neurons}
+
+		// Inicialitzem les neurones i assignem a la capa
+		for neuronIdx := 0; neuronIdx < neuronCount; neuronIdx++ {
+			neuron := Neuron{
+				Inputs: []*Synapse{},
+				Bias:   core.NewRangeF64(0.0), // Bias inicialitzat a 0.0
+				FNL:    FNs.NewReLU_nf(),      // Funció neuronal predeterminada
+			}
+			layer.neurons[neuronIdx] = &neuron
+		}
+
+		// Afegim la capa a la xarxa
+		network.layers = append(network.layers, layer)
 	}
 
-	// Crea les sinapsis.
-	for _, conn := range config.Connections {
-		fromLayer := conn.FromLayer
-		toLayer := conn.ToLayer
+	// Creem les sinapsis segons els links
+	for _, link := range ndlConfig.Links {
+		fromLayer, fromNeuron, err := parseLinkEndpoint(link.From)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing 'from' endpoint: %v", err)
+		}
+		toLayer, toNeuron, err := parseLinkEndpoint(link.To)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing 'to' endpoint: %v", err)
+		}
 
-		synapses := make([][]Synapse, len(network.neurons[fromLayer]))
-		for i := range network.neurons[fromLayer] {
-			synapses[i] = make([]Synapse, len(network.neurons[toLayer]))
-			for j := range network.neurons[toLayer] {
-				synapses[i][j] = Synapse{
-					Weight: core.NewRangeF64(conn.Weights[i][j]),
-					Input:  &network.neurons[fromLayer][i],
+		if fromNeuron == "n" || toNeuron == "n" {
+			// Connexió de totes les neurones
+			for fIdx, fromNeuron := range network.layers[fromLayer].neurons {
+				for tIdx := range network.layers[toLayer].neurons {
+					synapse := Synapse{
+						Weight: core.NewRangeF64(0.0), // Pes inicialitzat a 0.0
+						Input:  fromNeuron,
+					}
+					network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)
+					network.layers[fromLayer].neurons[fIdx].Inputs = append(network.layers[fromLayer].neurons[fIdx].Inputs, &synapse)
 				}
-				network.neurons[toLayer][j].Inputs = append(network.neurons[toLayer][j].Inputs, &synapses[i][j])
 			}
+		} else {
+			// Connexió específica
+			fIdx, _ := strconv.Atoi(fromNeuron)
+			tIdx, _ := strconv.Atoi(toNeuron)
+			synapse := Synapse{
+				Weight: core.NewRangeF64(0.0),
+				Input:  network.layers[fromLayer].neurons[fIdx],
+			}
+			network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)
+			network.layers[fromLayer].neurons[fIdx].Inputs = append(network.layers[fromLayer].neurons[fIdx].Inputs, &synapse)
 		}
-		network.synapses[fromLayer] = synapses
 	}
 
 	return network, nil
 }
 
 // AddLayer afegeix una capa a la xarxa i actualitza les instàncies.
-func (sNet *NetworkCPU) AddLayer(pLayer Layer) {
-	sNet.layers = append(sNet.layers, pLayer)
-	sNet.neurons = append(sNet.neurons, pLayer.Neurons())
-	sNet.synapses = append(sNet.synapses, pLayer.Synapses())
-}
+// func (sNet *NetworkCPU) AddLayer(pLayer Layer) {
+// 	sNet.layers = append(sNet.layers, pLayer)
+// 	sNet.neurons = append(sNet.neurons, pLayer.Neurons())
+// 	sNet.synapses = append(sNet.synapses, pLayer.Synapses())
+// }
 
 // Forward executa la propagació endavant.
 func (sNet *NetworkCPU) Forward(inputs []core.RangeIntf) []core.RangeIntf {
@@ -84,4 +130,30 @@ func (n *NetworkCPU) Backward(errors []core.RangeIntf) {
 	for i := len(n.layers) - 1; i >= 0; i-- {
 		currentErrors = n.layers[i].Backward(currentErrors)
 	}
+}
+
+func parseLinkEndpoint(endpoint string) (layerIdx int, neuronIdx string, err error) {
+	// Dividim l'endpoint en parts separades per ","
+	parts := strings.Split(endpoint, ",")
+	if len(parts) != 2 {
+		return 0, "", fmt.Errorf("invalid format: expected 'L:x, N:y', got '%s'", endpoint)
+	}
+
+	// Analitzem la capa (L:x)
+	if !strings.HasPrefix(parts[0], "L:") {
+		return 0, "", fmt.Errorf("invalid layer format: missing 'L:' in '%s'", parts[0])
+	}
+	layerStr := strings.TrimPrefix(parts[0], "L:")
+	layerIdx, err = strconv.Atoi(layerStr)
+	if err != nil {
+		return 0, "", fmt.Errorf("invalid layer index: '%s'", layerStr)
+	}
+
+	// Analitzem la neurona (N:y)
+	if !strings.HasPrefix(parts[1], "N:") {
+		return 0, "", fmt.Errorf("invalid neuron format: missing 'N:' in '%s'", parts[1])
+	}
+	neuronIdx = strings.TrimPrefix(parts[1], "N:")
+
+	return layerIdx, neuronIdx, nil
 }

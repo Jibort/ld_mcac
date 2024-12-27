@@ -3,7 +3,9 @@
 
 package core
 
-import "math"
+import (
+	"math"
+)
 
 const (
 	Precision32 = 6
@@ -25,54 +27,6 @@ const (
 )
 
 // Interfície global
-type _RangeIntf interface {
-	// Comparacions
-	Equals(pOther RangeIntf) bool
-	LessThan(pOther RangeIntf) bool
-	LessOrEqualThan(pOther RangeIntf) bool
-	GreaterThan(pOther RangeIntf) bool
-	GreaterOrEqualThan(pOther RangeIntf) bool
-
-	// Valors especials.
-	IsInfinitePos() bool
-	IsInfiniteNeg() bool
-	IsNullValue() bool
-
-	// Grups.
-	IsGroupA() bool
-	IsGroupB() bool
-	IsGroupC() bool
-	IsGroupD() bool
-
-	// Operacions
-	Add(pOther RangeIntf) RangeIntf
-	Sub(pOther RangeIntf) RangeIntf
-	Mul(pOther RangeIntf) RangeIntf
-	Div(pOther RangeIntf) (RangeIntf, error)
-	// ... i altres operacions comunes necessàries.
-
-	// Funcions de desencapçulament.
-	ValueF64() float64
-	ValueF32() float32
-	ValueI64() int64
-	ValueI32() int32
-	ValueU64() uint64
-	ValueU32() uint32
-
-	// Funcions de saturació.
-	IsSaturated() bool
-	IsSaturatedPos() bool
-	IsSaturatedNeg() bool
-
-	// Aquestes funcions poden ser útils en un futur.
-	AsF64() RangeF64
-	// AsF32() RangeF32
-	// AsI64() RangeI64
-	// AsI32() RangeI32
-	// AsU64() RangeU64
-	// AsU32() RangeU32
-}
-
 type RangeIntf interface {
 	// Comparacions
 	Equals(pOther RangeIntf) bool
@@ -88,6 +42,7 @@ type RangeIntf interface {
 	IsPadding() bool
 	IsPaddingStart() bool
 	IsPaddingEnd() bool
+	IsNull() bool
 
 	// Grups
 	IsGroupA() bool
@@ -131,6 +86,11 @@ type RangeIntf interface {
 	IsSymbol() bool // Retorna cert només si la instància defineix un símbol
 	ToSymbol() rune // Retorna el símbol RangeIntf si és un símbol (0 en cas contrari)
 
+	IsIdentifier() bool
+	IsSubnormal() bool
+	ExtractMantissa() uint64
+	ExtractExponent() int
+
 	// Altres segons necessitats
 }
 
@@ -144,4 +104,10 @@ type Range64Intf interface {
 type Range32Intf interface {
 	RangeIntf
 	As64() Range64Intf // conversió a 64 bits
+}
+
+type NetworkConfig struct {
+	Layers          int    `json:"layers"`            // Nombre de capes
+	NeuronsPerLayer []int  `json:"neurons_per_layer"` // Nombre de neurones per cada capa
+	Activation      string `json:"activation"`        // Funció d'activació predeterminada
 }

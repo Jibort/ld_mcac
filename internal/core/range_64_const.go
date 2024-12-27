@@ -6,10 +6,10 @@ package core
 // Constants i pseudoconstants per Range64
 // Màscares principals de bits
 const (
-	SignMask       = uint64(0b10000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // bit 63
-	MetaMask       = uint64(0b01111111_11111111_00000000_00000000_00000000_00000000_00000000_00000000) // bits 62-49
-	ValueMask      = uint64(0b00000000_11111111_11111111_11111111_11111111_11111111_11111111_11111111) // bits de valor
-	SaturationMask = uint64(0b01111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111) // saturació (Group D)
+	SignMask  = uint64(0b10000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // bit 63
+	MetaMask  = uint64(0b01111111_11111111_00000000_00000000_00000000_00000000_00000000_00000000) // bits 62-49
+	ValueMask = uint64(0b00000000_11111111_11111111_11111111_11111111_11111111_11111111_11111111) // bits de valor
+	// SaturationMask = uint64(0b01111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111) // saturació (Group D)
 )
 
 // Màscares de grup (bits 62-61)
@@ -30,6 +30,15 @@ const (
 	SubGroupC3Mask   = uint64(0b00001100_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // Subgrup C3
 	SubgroupNullMask = uint64(0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // Subgrup B (null)
 	SubgroupInfMask  = uint64(0b00000110_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // Subgrup B (infinit)
+)
+
+const (
+	SequenceTypeMask  = uint64(0b00001100_00000000_00000000_00000000_00000000_00000000_00000000_00000000) // bits 60-59
+	ElementTypeMask   = uint64(0b00000011_10000000_00000000_00000000_00000000_00000000_00000000_00000000) // bits 58-56
+	SequenceTypeShift = 60
+	ElementTypeShift  = 57
+	ElementIDMask     = uint64(0x000FFFFFFFFFFFFF) // bits inferiors (52 bits)
+
 )
 
 // Màscares de padding.
@@ -61,7 +70,30 @@ var (
 	R64_NULL     = NewRangeF64(U64ToF64(GroupBMask | SubgroupNullMask))
 	R64_INF_POS  = NewRangeF64(U64ToF64(GroupBMask | SubgroupInfMask))
 	R64_INF_NEG  = NewRangeF64(U64ToF64(SignMask | GroupBMask | SubgroupInfMask))
-	R64_SAT_1POS = NewRangeF64Saturated(1.0)
-	R64_SAT_1NEG = NewRangeF64Saturated(-1.0)
+	R64_SAT_1POS = NewRangeF64Saturated(1.0, false)
+	R64_SAT_1NEG = NewRangeF64Saturated(-1.0, false)
 	R64_ZERO     = NewRangeF64Zero()
 )
+
+var (
+	RangeF64PositiveSaturated = NewRangeF64Saturated(1, false)  // +SAT
+	RangeF64NegativeSaturated = NewRangeF64Saturated(-1, false) // -SAT
+)
+
+const (
+	SaturationMask    uint64 = 0x8000000000000000 // Bit de saturació (S1)
+	SignBitMask       uint64 = 0x4000000000000000 // Bit de signe
+	NullFlagMask      uint64 = 0x2000000000000000 // Flag 'x' per valors nuls
+	UnitFlagMask      uint64 = 0x1000000000000000 // Flag 'u' per +1.0* / -1.0*
+	SubnormalFlagMask uint64 = 0x0800000000000000 // Flag 'n' per subnormalitzats
+)
+
+// Constants necessàries per a l'ampliació del Grup A
+const (
+	// Exponents per a [-2π, +2π]
+	Exponent1024 = 1024
+	Exponent1025 = 1025
+
+	// Nous rangs del Grup A
+	RangeNegTwoPi = -2 * math.Pi // -2π
+	RangePosTwoPi = 2 * math.Pi  // 2π

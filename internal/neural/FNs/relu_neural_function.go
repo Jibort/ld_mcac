@@ -12,7 +12,7 @@ type ReLU_nf struct {
 }
 
 // Crea una nova instància de la Funció Neuronal ReLU.
-func NewReLUnf() *ReLU_nf {
+func NewReLU_nf() *ReLU_nf {
 	return &ReLU_nf{
 		nfs: make([]NeuralFunctionIntf, 0),
 	}

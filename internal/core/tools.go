@@ -99,6 +99,13 @@ func F64ToB64(pFt float64) string {
 // U64 a ..............................
 // Conversió des de uint64 a float64
 func U64ToF64(pU64 uint64) float64 {
+	if (pU64>>63) == 1 && (pU64&0x7FFFFFFFFFFFFFFF) == 0x7FFFFFFFFFFFFFFF {
+		panic(fmt.Sprintf("Invalid IEEE 754 representation: %064b", pU64))
+	}
+	return math.Float64frombits(pU64)
+}
+
+func U64ToF64_(pU64 uint64) float64 {
 	if !ValidateIEEE754(pU64) {
 		panic(fmt.Sprintf("Invalid IEEE 754 representation: %064b", pU64))
 	}
@@ -134,9 +141,9 @@ func ValidateIEEE754(pU64 uint64) bool {
 	return true
 }
 
-// Exponents.
-func (sSrc RangeF64) ExtractExponent() uint16 {
-	bits := F64ToU64(sSrc.value)
-	exponent := (bits >> 52) & 0x7FF // Obtenim els 11 bits de l'exponent
-	return uint16(exponent)
-}
+// // Exponents.
+// func (sSrc RangeF64) ExtractExponent() uint16 {
+// 	bits := F64ToU64(sSrc.value)
+// 	exponent := (bits >> 52) & 0x7FF // Obtenim els 11 bits de l'exponent
+// 	return uint16(exponent)
+// }

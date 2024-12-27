@@ -23,3 +23,15 @@ type NeuralFunctionIntf interface {
 	// // Retorna l'última funció neuronal de la llista (l'única en que rNext seria nul).
 	// Last() *NeuralFunctionIntf
 }
+
+func CreateActivationFunction(name string) NeuralFunctionIntf {
+	// Exemple de retorn d'una funció
+	switch name {
+	case "ReLU":
+		return NewReLU_nf()
+	case "LeakyReLU":
+		return NewLeakyReLU_nf()
+	default:
+		panic("Funció no reconeguda")
+	}
+}

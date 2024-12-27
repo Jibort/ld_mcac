@@ -10,7 +10,7 @@ import (
 	"github.com/jibort/ld_mcac/internal/core"
 )
 
-func main() {
+func main_() {
 	fmt.Println("Tests de RangeF64 suma group A + percentage")
 	testCases := []struct {
 		name string

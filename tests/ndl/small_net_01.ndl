@@ -1,0 +1,5 @@
+{
+  "layers": 3,
+  "neurons_per_layer": [2, 4, 1],
+  "activation": "ReLU"
+}

@@ -10,12 +10,12 @@ import (
 
 type Neuron struct {
 	Inputs []*Synapse
-	Bias   *core.RangeIntf
+	Bias   core.RangeIntf
 	FNL    FNs.NeuralFunctionIntf
 }
 
 func (n *Neuron) Compute(inputs []core.RangeIntf) core.RangeIntf {
-	sum := *n.Bias
+	sum := n.Bias
 	for _, synapse := range n.Inputs {
 		sum.SetF64Value(sum.GetF64Value() + synapse.Compute(inputs).GetF64Value())
 	}
