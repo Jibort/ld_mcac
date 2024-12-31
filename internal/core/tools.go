@@ -105,13 +105,6 @@ func U64ToF64(pU64 uint64) float64 {
 	return math.Float64frombits(pU64)
 }
 
-func U64ToF64_(pU64 uint64) float64 {
-	if !ValidateIEEE754(pU64) {
-		panic(fmt.Sprintf("Invalid IEEE 754 representation: %064b", pU64))
-	}
-	return *(*float64)(unsafe.Pointer(&pU64))
-}
-
 func U64ToB64(pVal uint64) string {
 	// Crear un slice de bytes de mida 8
 	bytes := make([]byte, 8)
@@ -141,9 +134,27 @@ func ValidateIEEE754(pU64 uint64) bool {
 	return true
 }
 
-// // Exponents.
-// func (sSrc RangeF64) ExtractExponent() uint16 {
-// 	bits := F64ToU64(sSrc.value)
-// 	exponent := (bits >> 52) & 0x7FF // Obtenim els 11 bits de l'exponent
-// 	return uint16(exponent)
-// }
+func DecomposeF64(value float64) (sign int, exponent int, mantissa uint64) {
+	// Converteix el float64 a la seva representació en uint64
+	bits := F64ToU64(value)
+
+	// Bit de signe: el bit 63
+	sign = int((bits >> 63) & 1)
+
+	// Exponent: els bits 62-52
+	exponent = int((bits >> 52) & 0x7FF)
+
+	// Mantissa: els bits 51-0
+	mantissa = bits & ((1 << 52) - 1)
+
+	return
+}
+
+// COMPARACIONS AMB 'float' -----------
+// Retorna cert només si la diferència entre pA i pB és inferior a pEpsilon.
+func Equals64(pA, pB float64, pEpsilon *float64) (rEquals bool) {
+	if pEpsilon == nil {
+		pEpsilon = &Epsilon64
+	}
+	return math.Abs(pA-pB) < *pEpsilon
+}

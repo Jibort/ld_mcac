@@ -32,12 +32,12 @@ var (
 )
 
 // Codificació de cada símbol com a RangeF64
-func EncodeSymbol(symbol rune) RangeF64 {
-	if id, exists := SymbolToID[symbol]; exists {
-		// Combinem els camps de grup, subgrup i identificador
-		value := GroupCMask | SubGroupC3Mask | id
+func EncodeSymbol(pSym rune) RangeF64 {
+	if _, exists := SymbolToID[pSym]; exists {
+		sym := uint64(pSym)
+		u64 := RangeF64Configs.Groups.C | sym
 
-		return NewRangeF64FromU64(value)
+		return NewRangeF64FromU64(u64)
 	}
 
 	return R64Unknown

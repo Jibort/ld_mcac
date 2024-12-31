@@ -152,11 +152,11 @@ Es reserven espais suficients per a identificar components amb granularitat fina
 - 0bm1: Identificador del grup de meta-significats (Grup D).
 - 10g: Codifica que es tracta del Grup D.
 - Tipus (3 bits): Distingir entre els diferents elements:
-- 000: Xarxa (Net).
-- 001: Capa (Layer).
-- 010: Neurona (N).
-- 011: Sinapsi (Syn).
-- 100: Altres (Reservat per extensions).
+   - 000: Xarxa (Net).
+   - 001: Capa (Layer).
+   - 010: Neurona (N).
+   - 011: Sinapsi (Syn).
+   - 1xx: Altres (Reservat per extensions).
 - Jerarquia (57 bits): Codificació específica per a identificar instàncies concretes dins la xarxa.
 #### **Exemples:**
 <u>Identificador d'una Xarxa:</u>

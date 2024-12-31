@@ -3,29 +3,6 @@
 
 package core
 
-import (
-	"math"
-)
-
-const (
-	Precision32 = 6
-	Precision64 = 16
-	// SmallThreshold64 = 1e-8 // Nou llindar per valors petits
-)
-
-var (
-	Epsilon32 = float32(math.Pow(10, -Precision32))
-	Factor32  = math.Pow(10, Precision32)
-	// Epsilon64 = math.Pow(10, -Precision64)
-	// Factor64  = math.Pow(10, Precision64)
-)
-
-const (
-	Epsilon64        = 1e-13                  // Redueix el llindar per detectar errors petits
-	SmallThreshold64 = 1e-8                   // Augmenta la sensibilitat per valors petits
-	Factor64         = 10_000_000_000_000_000 // Augmenta la precisió en l'arrodoniment
-)
-
 // Interfície global
 type RangeIntf interface {
 	// Comparacions
@@ -38,6 +15,7 @@ type RangeIntf interface {
 	// Valors especials
 	IsInfinitePos() bool
 	IsInfiniteNeg() bool
+	IsInfinite() bool
 	IsNullValue() bool
 	IsPadding() bool
 	IsPaddingStart() bool

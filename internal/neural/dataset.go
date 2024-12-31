@@ -38,7 +38,7 @@ func convertToRangeF64(input string) []core.RangeF64 {
 	var result []core.RangeF64
 	for _, char := range input {
 		// Convertim cada caràcter a un símbol del grup B.1 (definit en RangeF64).
-		result = append(result, core.NewRangeF64Symbol(char))
+		result = append(result, core.NewRangeF64FromSymbol(char))
 	}
 	return result
 }
