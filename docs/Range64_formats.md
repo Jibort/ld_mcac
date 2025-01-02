@@ -298,7 +298,7 @@ S10010tt-????mmmm-mmmmmmmm-mmmmmmmm-mmmmmmmm-mmmmmmmm-mmmmmmmm-mmmmmmmm
 
 ``` monospace
 B7       B6       B5       B4       B3       B2       B1       B0       
-c10011ee-eeeeeeee-????aaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa
+c10011ee-eeeeeeee-aaaaaaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa-aaaaaaaa
 ```
 
 - **Descripció:** Representa codis d'error i arguments associats.

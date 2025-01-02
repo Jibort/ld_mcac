@@ -41,17 +41,6 @@ func NewRangeF64Null() RangeF64 {
 	return NewRangeF64FromU64(bits)
 }
 
-// Crea un valor RangeF64 per a errors, codificant el codi d'error i el valor erroni.
-func NewRangeF64Error(pCode int, pErroneousValue float64) RangeF64 {
-	groupBits := RangeF64Configs.Groups.B
-	errorCodeBits := uint64(pCode) << 48
-	valueBits := math.Float64bits(pErroneousValue) & ValueMask
-
-	finalBits := groupBits | errorCodeBits | valueBits
-
-	return NewRangeF64FromU64(finalBits)
-}
-
 // Crea valors saturats
 func NewRangeF64Saturated(value float64, isNull bool) RangeF64 {
 	var u64 uint64
@@ -93,7 +82,7 @@ func NewRangeF64FromSymbol(pSym rune) RangeF64 {
 
 func NewRangeF64Percentage(pF64 float64) RangeF64 {
 	if pF64 < 0.0 || pF64 > 1.0 {
-		return NewRangeF64Error(1, pF64)
+		return NewRangeF64Error(true, ErrCode_InvalidPercentage, 0).RangeF64
 	}
 
 	valueBits := uint64(math.Round(pF64 * (1 << 52)))

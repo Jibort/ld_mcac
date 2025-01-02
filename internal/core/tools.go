@@ -158,3 +158,8 @@ func Equals64(pA, pB float64, pEpsilon *float64) (rEquals bool) {
 	}
 	return math.Abs(pA-pB) < *pEpsilon
 }
+
+// MÀSCARES ---------------------------
+func ApplyMask(pValue uint64, pMask uint64) (rU64 uint64) {
+	return (pValue | pMask) & pMask
+}
