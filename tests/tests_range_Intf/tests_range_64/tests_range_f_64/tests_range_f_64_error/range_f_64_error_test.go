@@ -4,7 +4,6 @@
 package tests_range_f_64_error
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -13,16 +12,15 @@ import (
 
 // Test per validar la creació d'un RangeF64Error
 func TestNewRangeF64Error(t *testing.T) {
-	errorInstance := core.NewRangeF64Error(true, 10, 42)
+	errorInstance := core.NewRangeF64Error(false, 10, 42)
 
 	if !errorInstance.IsError() {
 		t.Errorf("Expected IsError() to return true, got false")
 	}
 
-	fmt.Printf("src:  %s\n", core.FormatUint64AsBytes(errorInstance.RangeF64.GetU64Value()))
 	critic, code, args := errorInstance.Decode()
-	if !critic {
-		t.Errorf("Expected critical flag to be true, got false")
+	if critic {
+		t.Errorf("Expected critical flag to be false, got false")
 	}
 	if code != 10 {
 		t.Errorf("Expected error code to be 10, got %d", code)
@@ -65,7 +63,7 @@ func TestDecode(t *testing.T) {
 	if code != 20 {
 		t.Errorf("Expected error code to be 20, got %d", code)
 	}
-	if len(args) != 1 || args[0] != 128 {
+	if len(args) != 1 || args[0].(uint64) != 128 {
 		t.Errorf("Expected arguments to be [128], got %v", args)
 	}
 }

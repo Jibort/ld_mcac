@@ -25,10 +25,10 @@ type RangeF64Error struct {
 // Crea un valor RangeF64 per a errors, codificant el codi d'error i el valor erroni.
 func NewRangeF64Error(pCritic bool, pCode uint16, pArgs uint64) RangeF64Error {
 	// Validar el codi d'error i els arguments
-	if pCritic && !isValidErrorCode(pCode) {
-		panic(fmt.Sprintf("Codi d'error desconegut: %d", pCode))
+	if pCritic || !isValidErrorCode(pCode) {
+		panic(fmt.Sprintf("Codi d'error crític o desconegut: %d", pCode))
 	}
-	if pCritic && !isValidErrorArgs(pCode, pArgs) {
+	if pCritic || !isValidErrorArgs(pCode, pArgs) {
 		panic(fmt.Sprintf("Arguments d'error invàlids: %d", pArgs))
 	}
 
@@ -40,7 +40,7 @@ func NewRangeF64Error(pCritic bool, pCode uint16, pArgs uint64) RangeF64Error {
 // Validar si un codi d'error és vàlid
 func isValidErrorCode(pCode uint16) bool {
 	// Suposem que els codis d'error vàlids són de 0 a 1023 (10 bits disponibles)
-	return pCode >= 0 && pCode < 1024
+	return pCode < 1024
 }
 
 // Validar si els arguments són vàlids
@@ -95,11 +95,8 @@ func (sErr RangeF64Error) Decode() (rCritic bool, rCode int, rArgs []any) {
 	rCritic = (bits & Mask_B64_Flag_Critical_Error) != 0
 	rCode = int(bits&Mask_B4_ErrorCode) >> 48
 
-	fmt.Printf("\ntgt:   %s\n", FormatUint64AsBytes(bits))
-	fmt.Printf("rCode: %s\n", FormatUint64AsBytes(uint64(rCode)))
 	// Cal decodificar els arguments per tipus d'error
 	args := (bits & Mask_B4_Arguments) // Últims 48 bits pels arguments
-	fmt.Printf("args: %s\n", FormatUint64AsBytes(args))
 
 	numArgs := 1 // S'haurà de calcular dins el switch
 	switch rCode {
