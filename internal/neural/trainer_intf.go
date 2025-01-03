@@ -4,11 +4,12 @@
 package neural
 
 import (
-	"github.com/jibort/ld_mcac/internal/core"
+	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	dset "github.com/jibort/ld_mcac/internal/neural/dataset"
 )
 
 type TrainerIntf interface {
-	LoadDataset(pDataset Dataset)
+	LoadDataset(pDataset dset.Dataset)
 	TrainEpochs(pEpochs int)
-	EvaluateAccuracy(pTestSet Dataset) (rAccuracy core.RangeF64)
+	EvaluateAccuracy(pTestSet dset.Dataset) (rAccuracy rF64.RangeF64)
 }

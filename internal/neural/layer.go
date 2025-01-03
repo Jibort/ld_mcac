@@ -3,7 +3,9 @@
 
 package neural
 
-import "github.com/jibort/ld_mcac/internal/core"
+import (
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+)
 
 // type LayerIntf interface {
 // 	Forward(inputs []core.RangeIntf) []core.RangeIntf  // Processa els inputs
@@ -34,8 +36,8 @@ func (sLay *Layer) Synapses() [][]*Synapse {
 }
 
 // Forward executa la propagació endavant per la capa.
-func (sLay *Layer) Forward(inputs []core.RangeIntf) []core.RangeIntf {
-	outputs := make([]core.RangeIntf, len(sLay.neurons))
+func (sLay *Layer) Forward(inputs []intf.RangeIntf) []intf.RangeIntf {
+	outputs := make([]intf.RangeIntf, len(sLay.neurons))
 	for i, neuron := range sLay.neurons {
 		outputs[i] = neuron.Compute(inputs)
 	}
@@ -43,7 +45,7 @@ func (sLay *Layer) Forward(inputs []core.RangeIntf) []core.RangeIntf {
 }
 
 // Backward executa la retropropagació per la capa.
-func (sLay *Layer) Backward(errors []core.RangeIntf) []core.RangeIntf {
+func (sLay *Layer) Backward(errors []intf.RangeIntf) []intf.RangeIntf {
 	// Retropropagació per les neurones
 	// Retorna els errors per la capa anterior.
 	return errors

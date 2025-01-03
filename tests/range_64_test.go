@@ -7,7 +7,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
 )
 
 func TestNewRange64(t *testing.T) {
@@ -24,9 +24,9 @@ func TestNewRange64(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r := core.NewRange64(tt.input)
-		if r.ToFloat64() != tt.expected {
-			t.Errorf("NewRange64(%v) = %v; want %v", tt.input, r.ToFloat64(), tt.expected)
+		rf64 := rF64.NewRangeF64(tt.input)
+		if rf64.AsFloat64() != tt.expected {
+			t.Errorf("NewRange64(%v) = %v; want %v", tt.input, rf64.AsFloat64(), tt.expected)
 		}
 	}
 }

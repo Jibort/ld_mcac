@@ -1,0 +1,14 @@
+// Implementació dels valors Range en uint32.
+// CreatedAt: 2024/12/08 dg. JIQ
+
+package RU32
+
+// import (
+// 	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+// )
+
+// // Tipus pels Range float64.
+// type RangeU32 struct {
+// 	intf.RangeU32Intf
+// 	value float32
+// }

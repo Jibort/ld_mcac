@@ -98,7 +98,7 @@ s100ggdd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd
 
 ``` monospace
 B7       B6       B5       B4       B3       B2       B1       B0
-s100ggdd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd-dddddddd
+?10000??-????????-????????-????????-cccccccc-cccccccc-cccccccc-cccccccc
 ```
 
 - **Descripció:** Representa símbols UTF-32.

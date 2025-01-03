@@ -3,7 +3,7 @@
 
 package FNs
 
-import "github.com/jibort/ld_mcac/internal/core"
+import intf "github.com/jibort/ld_mcac/internal/core/Intf"
 
 type Linear_nf struct {
 	nfs []NeuralFunctionIntf
@@ -15,14 +15,14 @@ func NewLinear_nf() *Linear_nf {
 	}
 }
 
-func (lNF *Linear_nf) Forward(pInput core.RangeIntf) core.RangeIntf {
+func (lNF *Linear_nf) Forward(pInput intf.RangeIntf) intf.RangeIntf {
 	for _, nf := range lNF.nfs {
 		pInput = nf.Forward(pInput)
 	}
 	return pInput
 }
 
-func (lNF *Linear_nf) Backward(pOutput core.RangeIntf) core.RangeIntf {
+func (lNF *Linear_nf) Backward(pOutput intf.RangeIntf) intf.RangeIntf {
 	for idx := len(lNF.nfs) - 1; idx >= 0; idx-- {
 		pOutput = lNF.nfs[idx].Backward(pOutput)
 	}

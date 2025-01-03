@@ -4,20 +4,20 @@
 package neural
 
 import (
-	"github.com/jibort/ld_mcac/internal/core"
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 	"github.com/jibort/ld_mcac/internal/neural/FNs"
 )
 
 type Neuron struct {
 	Inputs []*Synapse
-	Bias   core.RangeIntf
+	Bias   intf.RangeIntf
 	FNL    FNs.NeuralFunctionIntf
 }
 
-func (n *Neuron) Compute(inputs []core.RangeIntf) core.RangeIntf {
+func (n *Neuron) Compute(inputs []intf.RangeIntf) intf.RangeIntf {
 	sum := n.Bias
 	for _, synapse := range n.Inputs {
-		sum.SetF64Value(sum.GetF64Value() + synapse.Compute(inputs).GetF64Value())
+		sum.SetFloat64(sum.AsFloat64() + synapse.Compute(inputs).AsFloat64())
 	}
 	return n.FNL.Forward(sum)
 }

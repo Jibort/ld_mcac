@@ -6,7 +6,7 @@ package FNs
 import (
 	"math"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 )
 
 type Tanh_nf struct {
@@ -19,11 +19,11 @@ func NewTanh_nf() *Tanh_nf {
 	}
 }
 
-func (tNF *Tanh_nf) Forward(pInput core.RangeIntf) core.RangeIntf {
-	value := pInput.GetF64Value()
+func (tNF *Tanh_nf) Forward(pInput intf.RangeIntf) intf.RangeIntf {
+	value := pInput.AsFloat64()
 	original := math.Tanh(value)
 	scaled := -1.0 + (original+0.761594)*(2.0/1.523188) // Escalat al rang [-1.0, +1.0]
-	pInput.SetF64Value(scaled)
+	pInput.SetFloat64(scaled)
 
 	for _, nf := range tNF.nfs {
 		pInput = nf.Forward(pInput)
@@ -31,14 +31,14 @@ func (tNF *Tanh_nf) Forward(pInput core.RangeIntf) core.RangeIntf {
 	return pInput
 }
 
-func (tNF *Tanh_nf) Backward(pOutput core.RangeIntf) core.RangeIntf {
+func (tNF *Tanh_nf) Backward(pOutput intf.RangeIntf) intf.RangeIntf {
 	for idx := len(tNF.nfs) - 1; idx >= 0; idx-- {
 		pOutput = tNF.nfs[idx].Backward(pOutput)
 	}
 
-	value := pOutput.GetF64Value()
+	value := pOutput.AsFloat64()
 	original := 1.0 - math.Pow(math.Tanh(value), 2.0) // Derivada de tanh
-	pOutput.SetF64Value(original)
+	pOutput.SetFloat64(original)
 	return pOutput
 }
 

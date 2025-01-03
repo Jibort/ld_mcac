@@ -6,15 +6,16 @@ package main
 import (
 	"fmt"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	f64_2p "github.com/jibort/ld_mcac/internal/core/RF642Pi"
+	f64_1 "github.com/jibort/ld_mcac/internal/core/RF64One"
 )
 
 // Tipus definit per RangF64 ja existent en un altre fitxer
 
 type SymbolEmbedding struct {
 	Symbol     rune
-	ValueOne   core.RangeF64One
-	ValueTwoPi core.RangeF64TwoPi
+	ValueOne   f64_1.RangeF64One
+	ValueTwoPi f64_2p.RangeF64TwoPi
 	// Group  string // Categoria funcional o fonètica
 }
 
@@ -22,20 +23,19 @@ func generateEmbeddings() []SymbolEmbedding {
 	// Registre de valors usats per garantir que són únics
 	usedValuesOne := map[float64]rune{}
 	usedValuesTwoPi := map[float64]rune{}
-	createRangeF64One := func(value float64, symbol rune) core.RangeF64One {
+	createRangeF64One := func(value float64, symbol rune) f64_1.RangeF64One {
 		if existingSymbol, exists := usedValuesOne[value]; exists {
 			panic(fmt.Sprintf("El valor %.4f ja està assignat al símbol '%s' (intentat assignar a '%s')", value, string(existingSymbol), string(symbol)))
 		}
 		usedValuesOne[value] = symbol
-		ret, _ := core.NewRangeF64One(value)
-		return *ret
+		return *f64_1.NewRangeF64One(value)
 	}
-	createRangeF64TwoPi := func(value float64, symbol rune) core.RangeF64TwoPi {
+	createRangeF64TwoPi := func(value float64, symbol rune) f64_2p.RangeF64TwoPi {
 		if existingSymbol, exists := usedValuesTwoPi[value]; exists {
 			panic(fmt.Sprintf("El valor %.4f ja està assignat al símbol '%s' (intentat assignar a '%s')", value, string(existingSymbol), string(symbol)))
 		}
 		usedValuesTwoPi[value] = symbol
-		ret, _ := core.NewRangeF64TwoPi(value)
+		ret, _ := f64_2p.NewRangeF64TwoPi(value)
 		return *ret
 	}
 

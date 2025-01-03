@@ -4,14 +4,14 @@
 package neural
 
 import (
-	"github.com/jibort/ld_mcac/internal/core"
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 )
 
 type NetworkIntf interface {
-	Train(pConfig core.NetworkConfig) (rSuccess bool)
-	Evaluate(pInput []core.RangeF64) (rOutput []core.RangeF64)
-	Forward(inputs []core.RangeIntf) []core.RangeIntf // Propaga els inputs a través de la xarxa
-	Backward(errors []core.RangeIntf)                 // Retropropaga els errors
+	Train(pConfig NetworkConfig) (rSuccess bool)
+	Evaluate(pInput []intf.RangeIntf) (rOutput []intf.RangeIntf)
+	Forward(inputs []intf.RangeIntf) []intf.RangeIntf // Propaga els inputs a través de la xarxa
+	Backward(errors []intf.RangeIntf)                 // Retropropaga els errors
 	AddLayer(layer Layer)                             // Afegeix una capa a la xarxa
 	Layers() []Layer                                  // Retorna totes les capes de la xarxa
 }

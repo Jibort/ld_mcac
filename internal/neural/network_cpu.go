@@ -10,7 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
 	"github.com/jibort/ld_mcac/internal/neural/FNs"
 )
 
@@ -59,7 +60,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 		for neuronIdx := 0; neuronIdx < neuronCount; neuronIdx++ {
 			neuron := Neuron{
 				Inputs: []*Synapse{},
-				Bias:   core.NewRangeF64(0.0), // Bias inicialitzat a 0.0
+				Bias:   rF64.NewRangeF64(0.0), // Bias inicialitzat a 0.0
 				FNL:    FNs.NewReLU_nf(),      // Funció neuronal predeterminada
 			}
 			layer.neurons[neuronIdx] = &neuron
@@ -85,7 +86,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 			for fIdx, fromNeuron := range network.layers[fromLayer].neurons {
 				for tIdx := range network.layers[toLayer].neurons {
 					synapse := Synapse{
-						Weight: core.NewRangeF64(0.0), // Pes inicialitzat a 0.0
+						Weight: rF64.NewRangeF64(0.0), // Pes inicialitzat a 0.0
 						Input:  fromNeuron,
 					}
 					network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)
@@ -97,7 +98,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 			fIdx, _ := strconv.Atoi(fromNeuron)
 			tIdx, _ := strconv.Atoi(toNeuron)
 			synapse := Synapse{
-				Weight: core.NewRangeF64(0.0),
+				Weight: rF64.NewRangeF64(0.0),
 				Input:  network.layers[fromLayer].neurons[fIdx],
 			}
 			network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)
@@ -116,7 +117,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 // }
 
 // Forward executa la propagació endavant.
-func (sNet *NetworkCPU) Forward(inputs []core.RangeIntf) []core.RangeIntf {
+func (sNet *NetworkCPU) Forward(inputs []intf.RangeIntf) []intf.RangeIntf {
 	currentInputs := inputs
 	for _, layer := range sNet.layers {
 		currentInputs = layer.Forward(currentInputs)
@@ -125,7 +126,7 @@ func (sNet *NetworkCPU) Forward(inputs []core.RangeIntf) []core.RangeIntf {
 }
 
 // Backward executa la retropropagació.
-func (n *NetworkCPU) Backward(errors []core.RangeIntf) {
+func (n *NetworkCPU) Backward(errors []intf.RangeIntf) {
 	currentErrors := errors
 	for i := len(n.layers) - 1; i >= 0; i-- {
 		currentErrors = n.layers[i].Backward(currentErrors)

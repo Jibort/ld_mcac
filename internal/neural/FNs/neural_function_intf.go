@@ -4,15 +4,15 @@
 package FNs
 
 import (
-	"github.com/jibort/ld_mcac/internal/core"
+	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 )
 
 type NeuralFunctionIntf interface {
 	// Permet executar la funció neuronal i a continuació la resta ordenada de funcions.
-	Forward(pInput core.RangeIntf) (rResult core.RangeIntf)
+	Forward(pInput intf.RangeIntf) (rResult intf.RangeIntf)
 
 	// Permet executar en ordre invers la derivada de la funció neuronal i a continuació la resta ordenada de funcions.
-	Backward(pOutput core.RangeIntf) (rResult core.RangeIntf)
+	Backward(pOutput intf.RangeIntf) (rResult intf.RangeIntf)
 
 	// Afegeix la següent Funció Neuronal a la cua de la llista.
 	Append(NeuralFunctionIntf)

@@ -7,7 +7,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	rF64One "github.com/jibort/ld_mcac/internal/core/RF64One"
 )
 
 func TestNewRangeF64One(t *testing.T) {
@@ -25,16 +25,16 @@ func TestNewRangeF64One(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r, err := core.NewRangeF64One(tt.input)
+		rOne := rF64One.NewRangeF64One(tt.input)
 		if tt.expectError {
-			if err == nil {
+			if !rOne.IsError() {
 				t.Errorf("NewRangeF64One(%v) expected an error but got none", tt.input)
 			}
 		} else {
 			if err != nil {
 				t.Errorf("NewRangeF64One(%v) returned an unexpected error: %v", tt.input, err)
 			}
-			if !r.IsGroupA() {
+			if !rOne.IsGroupA() {
 				t.Errorf("NewRangeF64One(%v) expected to be in Group A but was not", tt.input)
 			}
 		}
