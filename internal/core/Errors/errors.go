@@ -3,14 +3,22 @@
 
 package Errors
 
-// Errors de percentatges
-const (
-	ERR_INVALID_PERCENTAGE = 1001 // "Percentage out of range %.6f. Must be between 0.0 and 1.0."
-	ERR_NULL_VALUE         = 1002 // Error: Operació amb valor null
+import (
+	cs "github.com/jibort/ld_mcac/internal/core/Consts"
 )
 
-// Errors relacionats amb operacions
-const (
-	ERR_INVALID_ADD_OPERATION = 2001 // "Invalid addition operation between groups."
-	ERR_DIVISION_BY_ZERO      = 2002 // "Division by zero is not allowed."
-)
+func E_Unknown(pArgs uint64) RangeF64Error {
+	return NewRange64Error(true, cs.ErrCode_UnknownError, pArgs)
+}
+
+func E_InvalidArguments(pArgs uint64) RangeF64Error {
+	return NewRange64Error(true, cs.ErrCode_InvalidArguments, pArgs)
+}
+
+func E_InvalidPercentage(pArgs uint64) RangeF64Error {
+	return NewRange64Error(true, cs.ErrCode_InvalidPercentage, pArgs)
+}
+
+func E_OutOfRangeSymbol(pArgs uint64) RangeF64Error {
+	return NewRange64Error(true, cs.ErrCode_OutOfRangeSymbol, pArgs)
+}

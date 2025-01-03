@@ -1,7 +1,7 @@
 // Interfícies de Range per a float32.
 // CreatedAt: 2025/01/03 dv. JIQ
 
-package Intf
+package intf
 
 // Interfície per a valors de 32 bits decimals.
 type RangeF32Intf interface {

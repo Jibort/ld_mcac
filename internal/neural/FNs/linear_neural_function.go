@@ -3,7 +3,7 @@
 
 package FNs
 
-import intf "github.com/jibort/ld_mcac/internal/core/Intf"
+import intf "github.com/jibort/ld_mcac/internal/core/intf"
 
 type Linear_nf struct {
 	nfs []NeuralFunctionIntf

@@ -1,7 +1,7 @@
 // Interfícies de Range pel Grup D en float64.
 // CreatedAt: 2025/01/03 dv. JIQ
 
-package Intf
+package intf
 
 // Interfície per a valors de 64 bits (float64) del Grup D (metareferències).
 type RangeF64MetaRefIntf interface {

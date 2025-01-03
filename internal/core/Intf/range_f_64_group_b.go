@@ -1,7 +1,7 @@
 // Interfícies de Range pel Grup B en float64.
 // CreatedAt: 2025/01/03 dv. JIQ
 
-package Intf
+package intf
 
 // Interfície per a valors de 64 bits (float64) del Grup B.
 type RangeF64GroupBIntf interface {
@@ -140,5 +140,5 @@ type RangeF64SaturatedIntf interface {
 
 // Interfície per a valors de 64 bits (float64) del Subgrup B.4 (errors)
 type ErrorF64Intf interface {
-	Error64Intf
+	ErrorIntf
 }

@@ -1,7 +1,7 @@
 // Interfícies de Range per a 64 bits.
 // CreatedAt: 2025/01/03 dv. JIQ
 
-package Intf
+package intf
 
 // Interfície per a valors fixed o floating points de 32bits.
 type Range32Intf interface {

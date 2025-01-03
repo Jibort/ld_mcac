@@ -1,18 +1,20 @@
 //
 // CreatedAt: 2025/01/02 dj. JIQ
 
-package RF64OneSym
+package RF64Sym
 
 import (
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
 	errs "github.com/jibort/ld_mcac/internal/core/Errors"
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
-	"github.com/jibort/ld_mcac/internal/core/tools"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 type RangeF64Symbol struct {
-	rF64.RangeF64
+	intf.RangeF64SymbolIntf
+
+	inst rF64.RangeF64
 }
 
 // Constructor per crear un RangeF64Symbol des d'un rune (UTF-32)

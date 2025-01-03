@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 	"github.com/jibort/ld_mcac/internal/neural/FNs"
 )
 

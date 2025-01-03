@@ -4,7 +4,7 @@
 package neural
 
 import (
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 )
 
 // type LayerIntf interface {

@@ -9,7 +9,7 @@ var (
 	c_false = false
 )
 
-func TruePointer() *bool  { return &c_true }
+func TruePoint() *bool    { return &c_true }
 func FalsePointer() *bool { return &c_false }
 
 const (

@@ -7,7 +7,7 @@ import (
 	"math"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
@@ -35,10 +35,10 @@ func NewRangeF32(pVal float32) RangeF32 {
 func (sSrc RangeF32) Equals(pOther intf.RangeIntf) bool {
 	var src, tgt float32
 
-	switch pOther.(type) {
+	switch other := pOther.(type) {
 	case RangeF32:
 		src = tools.Quantize32(float32(math.Abs(float64(sSrc.value))))
-		tgt = tools.Quantize32(float32(math.Abs(pOther.AsFloat64())))
+		tgt = tools.Quantize32(float32(math.Abs(other.AsFloat64())))
 		break
 	default:
 		return false

@@ -2,17 +2,17 @@
 // Implementació dels valors Range en float64.
 // CreatedAt: 2024/12/08 dg. JIQ
 
-package RangeF64
+package RF64
 
 import (
 	"math"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
 	errs "github.com/jibort/ld_mcac/internal/core/Errors"
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
 	rF32 "github.com/jibort/ld_mcac/internal/core/RF32"
 	rF64One "github.com/jibort/ld_mcac/internal/core/RF64One"
 	rF64TwoPi "github.com/jibort/ld_mcac/internal/core/RF64TwoPi"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
@@ -88,7 +88,7 @@ func NewRangeF64FromSymbol(pSym rune) RangeF64 {
 
 func NewRangeF64Percentage(pF64 float64) intf.Range64Intf {
 	if pF64 < 0.0 || pF64 > 1.0 {
-		return errs.NewRange64Error(true, cs.ErrCode_InvalidPercentage, 0)
+		return errs.E_InvalidPercentage()
 	}
 
 	valueBits := uint64(math.Round(pF64 * (1 << 52)))
@@ -185,7 +185,7 @@ func (sF64 RangeF64) LessOrEqualThan(pOther intf.RangeIntf) bool {
 	case RangeF64:
 		fo64 = pOther.(RangeF64).value
 		break
-	case rF64One.RangeF64One:
+	case RangeF64One:
 		fo64 = other.AsFloat64()
 		break
 	case rF64TwoPi.RangeF64TwoPi:

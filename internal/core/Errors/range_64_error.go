@@ -18,15 +18,13 @@ import (
 	"strings"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 type RangeF64Error struct {
 	intf.ErrorF64Intf
-	Critical bool
-	Code     uint16
-	Args     uint64
+	value float64
 }
 
 // Crea un valor RangeF64 per a errors, codificant el codi d'error i el valor erroni.
@@ -40,7 +38,8 @@ func NewRange64Error(pCritic bool, pCode uint16, pArgs uint64) RangeF64Error {
 	}
 
 	// Codificar el valor segons l'especificació
-	return RangeF64Error{Critical: pCritic, Code: pCode, Args: pArgs}
+	coded := Encode(pCritic, pCode, pArgs)
+	return RangeF64Error{value: coded}
 }
 
 // Validar si un codi d'error és vàlid
@@ -66,12 +65,12 @@ func isValidErrorArgs(pCode uint16, pArgs uint64) bool {
 }
 
 // Codificar el valor d'un error i els corresponents arguments dins d'un float64
-func EncodeErrorValue(pCritic bool, pCode uint16, pArgs uint64) (rF64 float64) {
+func Encode(pCritic bool, pCode uint16, pArgs uint64) (rF64 float64) {
 	var bits uint64 = cs.Mask_Subgrup_B4
 
 	// Codificar el codi d'error i els arguments segons els bits assignats al PDF
 	if pCritic {
-		bits |= cs.Mask_B64_Flag_Critical_Error
+		bits |= cs.Mask_B64_Critical
 	}
 
 	bits |= uint64(pCode) << 48                  // Els primers 10 bits (Codi d'error).
@@ -94,11 +93,30 @@ func FormatUint64AsBytes(value uint64) string {
 	return strings.Join(grouped, " ")
 }
 
+// INTERFÍCIE 'ErrorIntf' -------------
+// Cert només si l'error és crític
+func (sErr RangeF64Error) IsCritical() bool {
+	u64 := tools.F64ToU64(sErr.value)
+	return (u64 & cs.Mask_B64_Critical) != 0
+}
+
+// Re<torna el codi d'error
+func (sErr RangeF64Error) Code() uint16 {
+	u64 := tools.F64ToU64(sErr.value)
+	return uint16(u64 & cs.Mask_B4_ErrorCode >> 48)
+}
+
+// Retorna els arguments de l'error
+func (sErr RangeF64Error) Arguments() []uint64 {
+	u64 := tools.F64ToU64(sErr.value)
+	return []uint64{(u64 & cs.Mask_B4_Arguments >> 48)}
+}
+
 // Descodificar un RangeF64Error
 func (sErr RangeF64Error) Decode() (rCritic bool, rCode int, rArgs []any) {
 	// Decodifica el valor float64 per obtenir el codi d'error i els arguments
-	bits := tools.F64ToU64(sErr.AsFloat64())
-	rCritic = (bits & cs.Mask_B64_Flag_Critical_Error) != 0
+	bits := sErr.AsUint64()
+	rCritic = (bits & cs.Mask_B64_Critical) != 0
 	rCode = int(bits&cs.Mask_B4_ErrorCode) >> 48
 
 	// Cal decodificar els arguments per tipus d'error

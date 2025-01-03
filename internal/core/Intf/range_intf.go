@@ -1,11 +1,11 @@
 // Interfícies generals de Range.
 // CreatedAt: 2024/12/08 dg. JIQ
 
-package Intf
+package intf
 
 // Interfície 'Clonable'
 type ClonableIntf interface {
-	Clone()
+	Clone() ClonableIntf
 }
 
 // Interície 'Comparable'

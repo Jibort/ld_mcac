@@ -5,7 +5,7 @@
 package R64
 
 import (
-	intf "github.com/jibort/ld_mcac/internal/core/Intf"
+	intf "github.com/jibort/ld_mcac/internal/core/intf"
 )
 
 // ESTRUCUTURES -----------------------
@@ -14,62 +14,93 @@ type Range64 struct {
 	intf.Range64Intf
 }
 
-// // CONSTRUCTORS -----------------------------
-// // NewRange64 crea un nou Range64 a partir d'un valor float64
-// func NewRange64(pVal float64) (rRange intf.RangeIntf) {
-// 	// Limita el valor a [-1.0, 1.0]
-// 	pVal = math.Max(MinValue, math.Min(MaxValue, pVal))
+// INTERFÍCIE 'ComparableIntf' --------
+func (sR64 Range64) Equals(pOther intf.RangeIntf) bool {
+	panic("Range64.Equals: No executable!")
+}
 
-// 	// Converteix a uint64
-// 	var result uint64
+// INTERFÍCIE 'ClonableIntf' ----------
+func (sR64 Range64) Clone() intf.ClonableIntf {
+	panic("Range64.Equals: No executable!")
+}
 
-// 	if pVal < 0 {
-// 		result |= SignMask
-// 		pVal = -pVal
-// 	}
+func (sR64 Range64) LessThan(pOther intf.ComparableIntf) bool {
+	panic("Range64.LessThan: No executable!")
+}
 
-// 	// Escala el valor per utilitzar la precisió completa de 48 bits
-// 	scaledVal := pVal * float64(ValueMask & ^SignMask)
-// 	result |= uint64(scaledVal) & (ValueMask & ^SignMask)
+func (sR64 Range64) LessOrEqualThan(pOther intf.ComparableIntf) bool {
+	panic("Range64.LessOrEqualThan: No executable!")
+}
 
-// 	return Range64{value: result}
-// }
+func (sR64 Range64) GreaterThan(pOther intf.ComparableIntf) bool {
+	panic("Range64.GreaterThan: No executable!")
+}
 
-// // Interfície 'RangeIntf' -------------
-// func (sR64 Range64) Equals(pOther intf.RangeIntf) bool {
-// 	return tools.Equals64(sR64.value, pOther.AsFloat64(), intf.Epsilon64)
-// }
+func (sR64 Range64) GreaterOrEqualThan(pOther intf.ComparableIntf) bool {
+	panic("Range64.GreaterOrEqualThan: No executable!")
+}
 
-// // FromBits crea un Range64 directament des d'una representació uint64
-// func FromBits(pBits uint64) (rRange Range64) {
-// 	return Range64(pBits)
-// }
+// INTERFÍCIE 'TypeConversionsIntf' ---
+func (sR64 Range64) Is32() bool { return false }
+func (sR64 Range64) Is64() bool { return true }
+func (sR64 Range64) IsGroupB() bool {
+	panic("Range64.IsGroupB(): No executable!")
+}
+func (sR64 Range64) IsGroupC() bool {
+	panic("Range64.IsGroupC(): No executable!")
+}
+func (sR64 Range64) IsGroupD() bool {
+	panic("Range64.IsGroupD(): No executable!")
+}
 
-// // Zero retorna un Range64 amb valor 0.0
-// func Zero() (rRange Range64) {
-// 	return Range64(IEEE754ZeroBits)
-// }
+func (sR64 Range64) AsFloat64() float64 {
+	panic("Range64.AsFloat64(): No executable!")
+}
 
-// // One retorna un Range64 amb valor 1.0
-// func One() (rRange Range64) {
-// 	return NewRange64(1.0)
-// }
+func (sR64 Range64) SetFloat64(float64) {
+	panic("Range64.SetFloat64(): No executable!")
+}
 
-// // CONVERSIONS -----------------------------
-// // ToFloat64 converteix un Range64 a float64
-// func (sRange Range64) ToFloat64() (rVal float64) {
-// 	return float64(int64(uint64(sRange)&ValueMask)) / float64(ValueMask & ^SignMask)
-// }
+func (sR64 Range64) AsUint64() uint64 {
+	panic("Range64.AsUint64(): No executable!")
+}
 
-// // ToBits retorna la representació uint64 d'un Range64
-// func (sRange Range64) ToBits() (rBits uint64) {
-// 	return uint64(sRange)
-// }
+func (sR64 Range64) SetUint64(uint64) {
+	panic("Range64.AsFloat64(): No executable!")
+}
 
-// // String retorna una representació en text del Range64
-// func (sRange Range64) String() (rStr string) {
-// 	return fmt.Sprintf("Range64{valor: %v, meta: %014b}", sRange.ToFloat64(), sRange.GetMeta())
-// }
+func (sR64 Range64) AsFloat32() float32 {
+	panic("Range64.AsFloat32(): No executable!")
+}
+
+func (sR64 Range64) SetFloat32(float32) {
+	panic("Range64.SetFloat32(): No executable!")
+}
+
+func (sR64 Range64) AsUint32() uint32 {
+	panic("Range64.AsUint32(): No executable!")
+}
+
+func (sR64 Range64) SetUint32(uint32) {
+	panic("Range64.SetUint32(): No executable!")
+}
+
+// INTERFÍCIE 'TypeConversionsIntf' ---
+func (sR64 Range64) IsF64() bool {
+	panic("Range64.SetUint32(): No executable!")
+}
+
+func (sR64 Range64) IsU64() bool {
+	panic("Range64.SetUint32(): No executable!")
+}
+func (sR64 Range64) As32() intf.Range32Intf {
+	panic("Range64.SetUint32(): No executable!")
+}
+
+// String retorna una representació en text del Range64
+func (sRange Range64) String() (rStr string) {
+	panic("Range64.String(): No executable!")
+}
 
 // // OPERACIONS DE METADADES ----------------
 // // SetMeta estableix els bits de metadades
