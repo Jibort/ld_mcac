@@ -60,7 +60,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 		for neuronIdx := 0; neuronIdx < neuronCount; neuronIdx++ {
 			neuron := Neuron{
 				Inputs: []*Synapse{},
-				Bias:   rF64.NewRangeF64(0.0), // Bias inicialitzat a 0.0
+				Bias:   rF64.NewF64Range(0.0), // Bias inicialitzat a 0.0
 				FNL:    FNs.NewReLU_nf(),      // Funció neuronal predeterminada
 			}
 			layer.neurons[neuronIdx] = &neuron
@@ -86,7 +86,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 			for fIdx, fromNeuron := range network.layers[fromLayer].neurons {
 				for tIdx := range network.layers[toLayer].neurons {
 					synapse := Synapse{
-						Weight: rF64.NewRangeF64(0.0), // Pes inicialitzat a 0.0
+						Weight: rF64.NewF64Range(0.0), // Pes inicialitzat a 0.0
 						Input:  fromNeuron,
 					}
 					network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)
@@ -98,7 +98,7 @@ func NewNetworkCPU(ndlPath string) (*NetworkCPU, error) {
 			fIdx, _ := strconv.Atoi(fromNeuron)
 			tIdx, _ := strconv.Atoi(toNeuron)
 			synapse := Synapse{
-				Weight: rF64.NewRangeF64(0.0),
+				Weight: rF64.NewF64Range(0.0),
 				Input:  network.layers[fromLayer].neurons[fIdx],
 			}
 			network.layers[toLayer].synapses[tIdx] = append(network.layers[toLayer].synapses[tIdx], &synapse)

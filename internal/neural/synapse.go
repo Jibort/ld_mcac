@@ -21,5 +21,5 @@ func NewSynapse(pWeight intf.RangeIntf, pInput *Neuron) *Synapse {
 }
 
 func (sSyn *Synapse) Compute(pInputs []intf.RangeIntf) intf.RangeIntf {
-	return rF64.NewRangeF64(sSyn.Weight.AsFloat64() * pInputs[0].AsFloat64())
+	return rF64.NewF64Range(sSyn.Weight.AsFloat64() * pInputs[0].AsFloat64())
 }

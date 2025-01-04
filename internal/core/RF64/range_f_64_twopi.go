@@ -8,13 +8,13 @@ import (
 	"math"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	rngs "github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 // Tipus RangeF64TwoPi representa el rang [-2·π, +2·π].
 type RangeF64TwoPi struct {
-	intf.RangeF64TwoPiIntf
+	rngs.F64RangeTwoPiIntf
 
 	v RangeF64
 }
@@ -29,15 +29,15 @@ func NewRangeF64TwoPi(value float64) RangeF64TwoPi {
 
 // INTERFÍCIE 'ClonableIntf' ----------
 // Clone retorna una còpia de la instància.
-func (sR642Pi RangeF64TwoPi) Clone() intf.ClonableIntf {
+func (sR642Pi RangeF64TwoPi) Clone() rngs.ClonableIntf {
 	return NewRangeF64TwoPi(sR642Pi.v.value)
 }
 
 // INTERFÍCIE 'ComparableIntf' --------
 // Equals comprova si dos valors són iguals.
-func (sR642Pi RangeF64TwoPi) Equals(pOther intf.ComparableIntf) bool {
+func (sR642Pi RangeF64TwoPi) Equals(pOther rngs.ComparableIntf) bool {
 	switch other := pOther.(type) {
-	case RangeF64One:
+	case F64RangeOne:
 		return tools.Equals64(sR642Pi.AsFloat64(), other.AsFloat64(), &cs.Epsilon64)
 	case RangeF64TwoPi:
 		return tools.Equals64(sR642Pi.AsFloat64(), other.AsFloat64(), &cs.Epsilon64)
@@ -48,9 +48,9 @@ func (sR642Pi RangeF64TwoPi) Equals(pOther intf.ComparableIntf) bool {
 }
 
 // Cert només si la instància és menor que pOther.
-func (sR642Pi RangeF64TwoPi) LessThan(pOther intf.ComparableIntf) bool {
+func (sR642Pi RangeF64TwoPi) LessThan(pOther rngs.ComparableIntf) bool {
 	switch other := pOther.(type) {
-	case RangeF64One:
+	case F64RangeOne:
 		return sR642Pi.AsFloat64() < other.AsFloat64()
 	case RangeF64TwoPi:
 		return sR642Pi.AsFloat64() < other.AsFloat64()
@@ -60,9 +60,9 @@ func (sR642Pi RangeF64TwoPi) LessThan(pOther intf.ComparableIntf) bool {
 }
 
 // Cert només si la instància és menor o igual que pOther.
-func (sR642Pi RangeF64TwoPi) LessOrEqualThan(pOther intf.ComparableIntf) bool {
+func (sR642Pi RangeF64TwoPi) LessOrEqualThan(pOther rngs.ComparableIntf) bool {
 	switch other := pOther.(type) {
-	case RangeF64One:
+	case F64RangeOne:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
 	case RangeF64TwoPi:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
@@ -72,9 +72,9 @@ func (sR642Pi RangeF64TwoPi) LessOrEqualThan(pOther intf.ComparableIntf) bool {
 }
 
 // Cert només si la instància és major que pOther.
-func (sR642Pi RangeF64TwoPi) GreaterThan(pOther intf.ComparableIntf) bool {
+func (sR642Pi RangeF64TwoPi) GreaterThan(pOther rngs.ComparableIntf) bool {
 	switch other := pOther.(type) {
-	case RangeF64One:
+	case F64RangeOne:
 		return sR642Pi.AsFloat64() > other.AsFloat64()
 	case RangeF64TwoPi:
 		return sR642Pi.AsFloat64() > other.AsFloat64()
@@ -84,9 +84,9 @@ func (sR642Pi RangeF64TwoPi) GreaterThan(pOther intf.ComparableIntf) bool {
 }
 
 // Cert només si la instància és major o igual que pOther.
-func (sR642Pi RangeF64TwoPi) GreaterOrEqualThan(pOther intf.ComparableIntf) bool {
+func (sR642Pi RangeF64TwoPi) GreaterOrEqualThan(pOther rngs.ComparableIntf) bool {
 	switch other := pOther.(type) {
-	case RangeF64One:
+	case F64RangeOne:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
 	case RangeF64TwoPi:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
@@ -153,7 +153,7 @@ func (sR642Pi RangeF64TwoPi) SetUint64(value uint64) {
 	sR642Pi.v.value = tools.U64ToF64(value)
 }
 
-func (sR642Pi RangeF64TwoPi) Clone() intf.RangeIntf {
+func (sR642Pi RangeF64TwoPi) Clone() rngs.RangeIntf {
 	return *NewRangeF64TwoPi(sR642Pi.v.value)
 }
 

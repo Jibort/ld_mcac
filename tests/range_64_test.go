@@ -24,7 +24,7 @@ func TestNewRange64(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		rf64 := rF64.NewRangeF64(tt.input)
+		rf64 := rF64.NewF64Range(tt.input)
 		if rf64.AsFloat64() != tt.expected {
 			t.Errorf("NewRange64(%v) = %v; want %v", tt.input, rf64.AsFloat64(), tt.expected)
 		}

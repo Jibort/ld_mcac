@@ -1,7 +1,7 @@
 // Llistat dels errors codificats dins RangeF64Error.
 // CreatedAt: 2024/12/31 dg. GPT(JIQ)
 
-package Consts
+package consts
 
 // MÀSCARES ---------------------------
 const Mask_Subgrup_B1 uint64 = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000

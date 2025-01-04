@@ -68,6 +68,14 @@ func F64ToU64(pF64 float64) uint64 {
 	return *(*uint64)(unsafe.Pointer(&pF64))
 }
 
+func F32ToF64(pF32 float32) float64 {
+	return float64(pF32)
+}
+
+func F32ToU32(pF32 float32) uint32 {
+	return *(*uint32)(unsafe.Pointer(&pF32))
+}
+
 func F64ToU32(pFt float64) uint32 {
 	return math.Float32bits(Quantize32(float32(pFt)))
 }
@@ -97,6 +105,12 @@ func U64ToF64(pU64 uint64) float64 {
 		panic(fmt.Sprintf("Invalid IEEE 754 representation: %064b", pU64))
 	}
 	return math.Float64frombits(pU64)
+}
+func U32ToF32(pU32 uint32) float32 {
+	if (pU32>>31) == 1 && (pU32&0x7FFFFFFF) == 0x7FFFFFFF {
+		panic(fmt.Sprintf("Tools.U32ToF32: Invalid IEEE 754 representation: %064b", pU32))
+	}
+	return math.Float32frombits(pU32)
 }
 
 func U64ToB64(pVal uint64) string {
@@ -153,7 +167,18 @@ func Equals64(pA, pB float64, pEpsilon *float64) (rEquals bool) {
 	return math.Abs(pA-pB) < *pEpsilon
 }
 
+func Equals32(pA, pB float32, pEpsilon *float32) (rEquals bool) {
+	if pEpsilon == nil {
+		pEpsilon = &cs.Epsilon32
+	}
+	return float32(math.Abs(float64(pA-pB))) < *pEpsilon
+}
+
 // MÀSCARES ---------------------------
-func ApplyMask(pValue uint64, pMask uint64) (rU64 uint64) {
+func ApplyMask64(pValue uint64, pMask uint64) (rU64 uint64) {
+	return (pValue | pMask) & pMask
+}
+
+func ApplyMask32(pValue uint32, pMask uint32) (rU32 uint32) {
 	return (pValue | pMask) & pMask
 }

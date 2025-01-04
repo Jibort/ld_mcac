@@ -1,10 +1,10 @@
-// Interfícies de Range pel Grup C en float64.
-// CreatedAt: 2025/01/03 dv. JIQ
+// Interfície general de tots els Grups C (tokens).
+// CreatedAt: 2025/01/04 ds. JIQ
 
-package intf
+package base
 
-type RangeF64TokenIntf interface {
-	RangeF64Intf
+// Interfície general de tots els Grups C (tokens).
+type GroupCIntf interface {
 	Category() int           // Retorna la categoria
 	Fiability() int          // Retorna la fiabilitat
 	RelativeWeight() float64 // Retorna el pes relatiu

@@ -1,7 +1,7 @@
 // Constants associades al tipus Range32.
 // CreatedAt: 2025/01/02 dj. JIQ
 
-package Consts
+package consts
 
 import (
 	"math"

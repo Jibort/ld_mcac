@@ -1,7 +1,7 @@
 // Constants associades al tipus Range64.
 // CreatedAt: 2024/12/28 ds. GPT
 
-package Consts
+package consts
 
 import (
 	"math"

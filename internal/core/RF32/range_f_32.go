@@ -7,18 +7,20 @@ import (
 	"math"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
+	"github.com/jibort/ld_mcac/internal/core/intf/ranges"
+	intf "github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 // Tipus pels Range float64.
-type RangeF32 struct {
-	intf.Range32Intf
+type F32Range struct {
+	intf.X32RangeIntf
 	value float32
 }
 
 // CONSTRUCTORS -----------------------
-func NewRangeF32(pVal float32) RangeF32 {
+func F32NewRange(pVal float32) F32Range {
 	val := tools.Quantize32(pVal)
 	if val < -1.0 {
 		val = -1.0
@@ -27,18 +29,19 @@ func NewRangeF32(pVal float32) RangeF32 {
 		val = 1.0
 	}
 
-	return RangeF32{value: tools.Quantize32(val)}
+	return F32Range{value: tools.Quantize32(val)}
 }
 
-// INTERFÍCIE 'RangeIntf' -------------
+// INTERFÍCIES ========================
+// INTERFÍCIE 'ComparableIntf' --------
 // Retorna cert només si la diferència entre els valors és inferior a epsilon32.
-func (sSrc RangeF32) Equals(pOther intf.RangeIntf) bool {
+func (sRF32 F32Range) Equals(pOther base.RangeIntf) bool {
 	var src, tgt float32
 
 	switch other := pOther.(type) {
-	case RangeF32:
-		src = tools.Quantize32(float32(math.Abs(float64(sSrc.value))))
-		tgt = tools.Quantize32(float32(math.Abs(other.AsFloat64())))
+	case F32Range:
+		src = tools.Quantize32(sRF32.value)
+		tgt = tools.Quantize32(other.AsFloat32())
 		break
 	default:
 		return false
@@ -48,15 +51,135 @@ func (sSrc RangeF32) Equals(pOther intf.RangeIntf) bool {
 }
 
 // Retorna cert només en cas que el valor de la instància sigui inferior al de pOther.
-func (sSrc RangeF32) LessThan(pOther intf.RangeIntf) bool {
-	src := tools.Quantize32(float32(math.Abs(float64(sSrc.value))))
-	tgt := tools.Quantize32(float32(math.Abs(pOther.AsFloat64())))
+func (sRF32 F32Range) LessThan(pOther base.RangeIntf) bool {
+	src := tools.Quantize32(float32(math.Abs(float64(sRF32.value))))
+	tgt := tools.Quantize32(pOther.AsFloat32())
 	return src < tgt
 }
 
 // Retorna cert només si el valor de la instància és inferior o igual al de pOtheer.
-func (sSrc RangeF32) LessOrEqualThan(pOther intf.RangeIntf) bool {
-	src := float32(math.Abs(float64(sSrc.value)))
-	tgt := float32(math.Abs(pOther.AsFloat64()))
-	return (src < tgt) || (src-tgt) < cs.Epsilon32
+func (sRF32 F32Range) LessOrEqualThan(pOther base.RangeIntf) bool {
+	return sRF32.LessThan(pOther) || sRF32.Equals(pOther)
+}
+
+func (sRF32 F32Range) GreaterThan(pOther base.RangeIntf) bool {
+	src := tools.Quantize32(float32(math.Abs(float64(sRF32.value))))
+	tgt := tools.Quantize32(pOther.AsFloat32())
+	return src > tgt
+}
+
+func (sRF32 F32Range) GreaterOrEqualThan(pOther base.RangeIntf) bool {
+	return sRF32.GreaterThan(pOther) || sRF32.Equals(pOther)
+}
+
+// INTERFÍCIE 'CloneableIntf' ---------
+func (sRF32 F32Range) Clone() base.RangeIntf {
+	return F32NewRange(sRF32.value)
+}
+
+// INTERFÍCIE 'RangeIntf' -------------
+func (sRF32 F32Range) Is64() bool {
+	return false
+}
+
+func (sRF32 F32Range) Is32() bool {
+	return true
+}
+
+func (sRF32 F32Range) IsError() bool {
+	return false
+}
+
+// Grups
+func (sRF32 F32Range) IsGroupA() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsGroupB() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsGroupC() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsGroupD() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsGroupE() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) Add(pOther base.RangeIntf) base.RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) Sub(pOther base.RangeIntf) base.RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) Mul(pOther base.RangeIntf) base.RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) Div(pOther base.RangeIntf) base.RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsF32() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsU32() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsF64() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) IsU64() bool {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) As64() ranges.X64RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+func (sRF32 F32Range) AsF64() ranges.F64RangeIntf {
+	panic("F32Range. : not implemented") // TODO: Implement
+}
+
+// INTERFÍCIE 'TypeConversionsIntf' ---
+func (sRF32 F32Range) AsFloat64() float64 {
+	return float64(tools.F32ToF64(sRF32.value))
+}
+
+func (sRF32 F32Range) SetFloat64(float64) {
+
+}
+
+func (sRF32 F32Range) AsUint64() uint64 {
+
+}
+
+func (sRF32 F32Range) SetUint64(uint64) {
+
+}
+
+func (sRF32 F32Range) AsFloat32() float32 {
+
+}
+
+func (sRF32 F32Range) SetFloat32(float32) {
+
+}
+
+func (sRF32 F32Range) AsUint32() uint32 {
+
+}
+
+func (sRF32 F32Range) SetUint32(uint32) {
+
 }
