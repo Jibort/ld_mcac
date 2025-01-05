@@ -1,7 +1,7 @@
 // Llistat dels símbols i la seva correspondència en Range64.
 // CreatedAt: 2024/12/10 dt. GPT
 
-package RF64OneSym
+package RF64Sym
 
 var IdToSymbol = map[uint64]rune{}
 

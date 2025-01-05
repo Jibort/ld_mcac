@@ -6,7 +6,7 @@ package FNs
 import (
 	"math"
 
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 )
 
 type Tanh_nf struct {
@@ -19,7 +19,7 @@ func NewTanh_nf() *Tanh_nf {
 	}
 }
 
-func (tNF *Tanh_nf) Forward(pInput intf.RangeIntf) intf.RangeIntf {
+func (tNF *Tanh_nf) Forward(pInput base.RangeIntf) base.RangeIntf {
 	value := pInput.AsFloat64()
 	original := math.Tanh(value)
 	scaled := -1.0 + (original+0.761594)*(2.0/1.523188) // Escalat al rang [-1.0, +1.0]
@@ -31,7 +31,7 @@ func (tNF *Tanh_nf) Forward(pInput intf.RangeIntf) intf.RangeIntf {
 	return pInput
 }
 
-func (tNF *Tanh_nf) Backward(pOutput intf.RangeIntf) intf.RangeIntf {
+func (tNF *Tanh_nf) Backward(pOutput base.RangeIntf) base.RangeIntf {
 	for idx := len(tNF.nfs) - 1; idx >= 0; idx-- {
 		pOutput = tNF.nfs[idx].Backward(pOutput)
 	}

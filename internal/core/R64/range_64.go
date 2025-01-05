@@ -18,7 +18,7 @@ func (m X64Range) AsFloat64() float64 {
 	panic("_64Range.AsFloat64: Not implemented") // TODO: Implement
 }
 
-func (m X64Range) SetFloat64(_ float64) {
+func (m *X64Range) SetFloat64(_ float64) {
 	panic("_64Range.SetFloat64: Not implemented") // TODO: Implement
 }
 
@@ -26,7 +26,7 @@ func (m X64Range) AsUint64() uint64 {
 	panic("_64Range.AsUint64: Not implemented") // TODO: Implement
 }
 
-func (m X64Range) SetUint64(_ uint64) {
+func (m *X64Range) SetUint64(_ uint64) {
 	panic("_64Range.SetUint64: Not implemented") // TODO: Implement
 }
 
@@ -34,7 +34,7 @@ func (m X64Range) AsFloat32() float32 {
 	panic("_64Range.AsFloat32: Not implemented") // TODO: Implement
 }
 
-func (m X64Range) SetFloat32(_ float32) {
+func (m *X64Range) SetFloat32(_ float32) {
 	panic("_64Range.SetFloat32: Not implemented") // TODO: Implement
 }
 
@@ -42,7 +42,7 @@ func (m X64Range) AsUint32() uint32 {
 	panic("_64Range.AsUint32: Not implemented") // TODO: Implement
 }
 
-func (m X64Range) SetUint32(_ uint32) {
+func (m *X64Range) SetUint32(_ uint32) {
 	panic("_64Range.SetUint32: Not implemented") // TODO: Implement
 }
 
@@ -147,7 +147,7 @@ func (m X64Range) IsGroupE() bool {
 // 	panic("_64Range.AsFloat64(): No executable!")
 // }
 
-// func (sR64 _64Range) SetFloat64(float64) {
+// func (sR64 *_64Range) SetFloat64(float64) {
 // 	panic("_64Range.SetFloat64(): No executable!")
 // }
 
@@ -155,7 +155,7 @@ func (m X64Range) IsGroupE() bool {
 // 	panic("_64Range.AsUint64(): No executable!")
 // }
 
-// func (sR64 _64Range) SetUint64(uint64) {
+// func (sR64 *_64Range) SetUint64(uint64) {
 // 	panic("_64Range.AsFloat64(): No executable!")
 // }
 
@@ -163,7 +163,7 @@ func (m X64Range) IsGroupE() bool {
 // 	panic("_64Range.AsFloat32(): No executable!")
 // }
 
-// func (sR64 _64Range) SetFloat32(float32) {
+// func (sR64 *_64Range) SetFloat32(float32) {
 // 	panic("_64Range.SetFloat32(): No executable!")
 // }
 
@@ -171,7 +171,7 @@ func (m X64Range) IsGroupE() bool {
 // 	panic("_64Range.AsUint32(): No executable!")
 // }
 
-// func (sR64 _64Range) SetUint32(uint32) {
+// func (sR64 *_64Range) SetUint32(uint32) {
 // 	panic("_64Range.SetUint32(): No executable!")
 // }
 
@@ -194,7 +194,7 @@ func (m X64Range) IsGroupE() bool {
 
 // // OPERACIONS DE METADADES ----------------
 // // SetMeta estableix els bits de metadades
-// func (sRange _64Range) SetMeta(pMeta uint64) (rRange _64Range) {
+// func (sRange *_64Range) SetMeta(pMeta uint64) (rRange _64Range) {
 // 	clearedMeta := uint64(sRange) & ^MetaMask
 // 	return _64Range(clearedMeta | ((pMeta << MetaShift) & MetaMask))
 // }
@@ -339,7 +339,7 @@ func (m X64Range) IsGroupE() bool {
 
 // // OPERACIONS DE METADADES ----------------
 // // SetMeta estableix els bits de metadades
-// func (sRange _64Range) SetMeta(pMeta uint64) (rRange _64Range) {
+// func (sRange *_64Range) SetMeta(pMeta uint64) (rRange _64Range) {
 // 	clearedMeta := uint64(sRange) & ^MetaMask
 // 	return _64Range(clearedMeta | ((pMeta << MetaShift) & MetaMask))
 // }

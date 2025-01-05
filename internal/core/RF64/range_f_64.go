@@ -37,8 +37,13 @@ func NewF64RangeZero() F64Range {
 }
 
 // INTERFÍCIES ========================
+// INTERDÍCIE 'ClonableIntf'
+func (sRF64 F64Range) Clone() base.RangeIntf {
+	res := NewF64Range(sRF64.AsFloat64())
+	return &res
+}
 
-func (sRF64 F64Range) SetFloat64(pF64 float64) {
+func (sRF64 *F64Range) SetFloat64(pF64 float64) {
 	sRF64.value = pF64
 }
 
@@ -46,7 +51,7 @@ func (sRF64 F64Range) AsUint64() uint64 {
 	return tools.F64ToU64(sRF64.AsFloat64())
 }
 
-func (sRF64 F64Range) SetUint64(pU64 uint64) {
+func (sRF64 *F64Range) SetUint64(pU64 uint64) {
 	sRF64.SetFloat64(tools.U64ToF64(pU64))
 }
 
@@ -54,7 +59,7 @@ func (sRF64 F64Range) AsFloat32() float32 {
 	panic("F64Range.AsFloat32: Not implemented") // TODO: Implement
 }
 
-func (sRF64 F64Range) SetFloat32(_ float32) {
+func (sRF64 *F64Range) SetFloat32(_ float32) {
 	panic("F64Range.SetFloat32: Not implemented") // TODO: Implement
 }
 
@@ -62,48 +67,43 @@ func (sRF64 F64Range) AsUint32() uint32 {
 	panic("F64Range.AsUint32: Not implemented") // TODO: Implement
 }
 
-func (sRF64 F64Range) SetUint32(_ uint32) {
+func (sRF64 *F64Range) SetUint32(_ uint32) {
 	panic("F64Range.SetUint32: Not implemented") // TODO: Implement
 }
 
-// INTERFÍCIE 'ClonableIntf' ----------
-func (sRF64 F64Range) Clone() base.ClonableIntf {
-	return NewF64Range(sRF64.value)
-}
-
 // INTERFÍCIE 'ComparableIntf' --------
-func (sRF64 F64Range) Equals(pOther base.ComparableIntf) bool {
+func (sRF64 F64Range) Equals(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64Range:
+	case *F64Range:
 		return tools.Equals64(sRF64.value, other.value, &cs.Epsilon64)
 	default:
 		panic(fmt.Sprintf("F64Range.Equals: Invalid type %T", pOther))
 	}
 }
 
-func (sRF64 F64Range) LessThan(pOther base.ComparableIntf) bool {
+func (sRF64 F64Range) LessThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64Range:
+	case *F64Range:
 		return sRF64.value < other.value
 	default:
 		panic(fmt.Sprintf("F64Range.LessThan: Invalid type %T", pOther))
 	}
 }
 
-func (sRF64 F64Range) LessOrEqualThan(pOther base.ComparableIntf) bool {
+func (sRF64 F64Range) LessOrEqualThan(pOther base.RangeIntf) bool {
 	return sRF64.LessThan(pOther) || sRF64.Equals(pOther)
 }
 
-func (sRF64 F64Range) GreaterThan(pOther base.ComparableIntf) bool {
+func (sRF64 F64Range) GreaterThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64Range:
+	case *F64Range:
 		return sRF64.value > other.value
 	default:
 		panic(fmt.Sprintf("F64Range.GreaterThan: Invalid type %T", pOther))
 	}
 }
 
-func (sRF64 F64Range) GreaterOrEqualThan(pOther base.ComparableIntf) bool {
+func (sRF64 F64Range) GreaterOrEqualThan(pOther base.RangeIntf) bool {
 	return sRF64.LessThan(pOther) || sRF64.Equals(pOther)
 }
 

@@ -1,4 +1,4 @@
-//
+// Tipus representatiu de Símbols.
 // CreatedAt: 2025/01/02 dj. JIQ
 
 package RF64Sym
@@ -6,7 +6,7 @@ package RF64Sym
 import (
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
 	errs "github.com/jibort/ld_mcac/internal/core/Errors"
-	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 	syms "github.com/jibort/ld_mcac/internal/core/intf/symbols"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
@@ -14,20 +14,20 @@ import (
 type F64RangeSymbol struct {
 	syms.F64SymbolIntf
 
-	inst rF64.F64Range
+	symbol rune
 }
 
 // Constructor per crear un F64RangeSymbol des d'un rune (UTF-32)
-func NewF64RangeSymbol(symbol rune) intf.Range64Intf {
+func NewF64RangeSymbol(pSymbol rune) base.RangeIntf {
 	// Verifiquem si el símbol està fora del rang UTF-32
-	if symbol > 0x10FFFF {
+	if pSymbol > 0x10FFFF {
 		// Retornem un F64RangeError amb un codi d'error específic
-		err := errs.NewRange64Error(false, cs.ErrCode_OutOfRangeSymbol, uint64(symbol))
+		err := errs.NewError(false, cs.ErrCode_OutOfRangeSymbol, uint64(pSymbol))
 		return err
 	}
 
 	// Codifiquem el símbol directament dins de F64Range
-	return F64RangeSymbol{rF64.NewF64Range(EncodeSymbolValue(symbol))}
+	return F64RangeSymbol{symbol: pSymbol}
 }
 
 // Codifica un symbol com a 'float64'.

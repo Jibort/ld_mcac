@@ -3,9 +3,7 @@
 
 package FNs
 
-import (
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
-)
+import intf "github.com/jibort/ld_mcac/internal/core/intf/base"
 
 const (
 	alpha = 0.01

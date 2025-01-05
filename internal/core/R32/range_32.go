@@ -17,7 +17,7 @@ func (m X32Range) AsFloat32() float32 {
 	panic("X32Range.AsFloat32: Not implemented") // TODO: Implement
 }
 
-func (m X32Range) SetFloat32(_ float32) {
+func (m *X32Range) SetFloat32(_ float32) {
 	panic("X32Range.SetFloat32: Not implemented") // TODO: Implement
 }
 
@@ -25,6 +25,6 @@ func (m X32Range) AsUint32() uint32 {
 	panic("X32Range.AsUint32: Not implemented") // TODO: Implement
 }
 
-func (m X32Range) SetUint32(_ uint32) {
+func (m *X32Range) SetUint32(_ uint32) {
 	panic("X32Range.SetUint32: Not implemented") // TODO: Implement
 }

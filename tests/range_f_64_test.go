@@ -7,10 +7,10 @@ import (
 	"math"
 	"testing"
 
-	"github.com/jibort/ld_mcac/internal/core"
+	core "github.com/jibort/ld_mcac/internal/core/RF64"
 )
 
-func TestNewRangeF64(t *testing.T) {
+func TestNewF64Range(t *testing.T) {
 	tests := []struct {
 		input       float64
 		expectError bool
@@ -25,17 +25,17 @@ func TestNewRangeF64(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r := core.NewRangeF64(tt.input)
+		r := core.NewF64Range(tt.input)
 		if tt.expectError {
 			if !r.IsError() {
-				t.Errorf("NewRangeF64(%v) expected an error but got none", tt.input)
+				t.Errorf("NewF64Range(%v) expected an error but got none", tt.input)
 			}
 		} else {
 			if r.IsError() {
-				t.Errorf("NewRangeF64(%v) returned an unexpected error: %v", tt.input, r.ErrorCode())
+				t.Errorf("NewF64Range(%v) returned an unexpected error: %v", tt.input, r)
 			}
 			if !r.IsGroupA() {
-				t.Errorf("NewRangeF64(%v) expected to be in Group A but was not", tt.input)
+				t.Errorf("NewF64Range(%v) expected to be in Group A but was not", tt.input)
 			}
 		}
 	}

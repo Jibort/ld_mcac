@@ -15,7 +15,7 @@ import (
 
 // QUANTITZACIÓ -----------------------
 // Assegura que els decimals mantenen la precisió desitjada.
-func Quantize64(pVal float64) float64 {
+func Quantize64One(pVal float64) float64 {
 	// Zero exacte
 	if pVal == 0.0 {
 		return 0.0
@@ -38,11 +38,63 @@ func Quantize64(pVal float64) float64 {
 	return rounded / cs.Factor64
 }
 
-// Assegura que els decimals mantenen la precisió desitjada.
-func Quantize32(pVal float32) float32 {
-	val := float64(pVal)
-	return float32(math.Round(val*cs.Factor32) / cs.Factor32)
+func Quantize64TwoPi(pVal float64) float64 {
+	// Zero exacte
+	if pVal == 0.0 {
+		return 0.0
+	}
+
+	// Valors petits a zero
+	absVal := math.Abs(pVal)
+	if (absVal - cs.SmallThreshold64) < cs.Epsilon64 {
+		return 0.0
+	}
+
+	// Valors propers a ±1
+	if absVal > 2*math.Pi-0.00000001 { // Valor més explícit per proximitat a 2·π
+		return math.Copysign(1.0, pVal)
+	}
+
+	// Multipliquem, arrodonim i dividim
+	scaled := pVal * cs.Factor64
+	rounded := math.Round(scaled)
+	return rounded / cs.Factor64
 }
+
+// Assegura que els decimals mantenen la precisió desitjada.
+func Quantize32One(pVal float32) float32 {
+	// Zero exacte
+	if pVal == 0.0 {
+		return 0.0
+	}
+
+	// Valors petits a zero
+	absVal := pVal
+	if absVal < 0 {
+		absVal = -absVal
+	}
+	if (absVal - cs.SmallThreshold32) < cs.Epsilon32 {
+		return 0.0
+	}
+
+	// Valors propers a ±1
+	if absVal > 0.9999999 { // Valor més explícit per proximitat a +1
+		if pVal < 0.0 {
+			return -absVal
+		}
+		return absVal
+	}
+
+	// Multipliquem, arrodonim i dividim
+	scaled := pVal * cs.Factor32
+	rounded := float32(math.Round(float64(scaled)))
+	return rounded / cs.Factor32
+}
+
+// func Quantize32TwoPi(pVal float32) float32 {
+// 	val := float64(pVal)
+// 	return float32(math.Round(val*cs.Factor32) / cs.Factor32)
+// }
 
 // CONVERSIONS ------------------------
 // F64 a ..............................
@@ -51,7 +103,7 @@ func F64ToF64(pFt float64) float64 {
 }
 
 func F64ToF32(pFt float64) float32 {
-	return Quantize32(float32(pFt))
+	return float32(pFt)
 }
 
 func F64ToI64(pFt float64) int64 {
@@ -60,7 +112,7 @@ func F64ToI64(pFt float64) int64 {
 }
 
 func F64ToI32(pFt float64) int32 {
-	bits := math.Float32bits(Quantize32(float32(pFt)))
+	bits := math.Float32bits(Quantize32One(float32(pFt)))
 	return *(*int32)(unsafe.Pointer(&bits))
 }
 
@@ -77,7 +129,7 @@ func F32ToU32(pF32 float32) uint32 {
 }
 
 func F64ToU32(pFt float64) uint32 {
-	return math.Float32bits(Quantize32(float32(pFt)))
+	return math.Float32bits(float32(pFt))
 }
 
 func F64ToB64(pFt float64) string {

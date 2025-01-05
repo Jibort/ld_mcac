@@ -5,21 +5,22 @@ package neural
 
 import (
 	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 )
 
 type Synapse struct {
-	Weight intf.RangeIntf
+	Weight base.RangeIntf
 	Input  *Neuron
 }
 
-func NewSynapse(pWeight intf.RangeIntf, pInput *Neuron) *Synapse {
+func NewSynapse(pWeight base.RangeIntf, pInput *Neuron) *Synapse {
 	return &Synapse{
 		Weight: pWeight,
 		Input:  pInput,
 	}
 }
 
-func (sSyn *Synapse) Compute(pInputs []intf.RangeIntf) intf.RangeIntf {
-	return rF64.NewF64Range(sSyn.Weight.AsFloat64() * pInputs[0].AsFloat64())
+func (sSyn *Synapse) Compute(pInputs []base.RangeIntf) base.RangeIntf {
+	res := rF64.NewF64Range(sSyn.Weight.AsFloat64() * pInputs[0].AsFloat64())
+	return &res
 }

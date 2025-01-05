@@ -11,5 +11,5 @@ import (
 type TrainerIntf interface {
 	LoadDataset(pDataset dset.Dataset)
 	TrainEpochs(pEpochs int)
-	EvaluateAccuracy(pTestSet dset.Dataset) (rAccuracy rF64.RangeF64)
+	EvaluateAccuracy(pTestSet dset.Dataset) (rAccuracy rF64.F64Range)
 }

@@ -6,7 +6,7 @@ package FNs
 import (
 	"math"
 
-	intf "github.com/jibort/ld_mcac/internal/core/intf"
+	intf "github.com/jibort/ld_mcac/internal/core/intf/base"
 )
 
 type Sigmoid_nf struct {

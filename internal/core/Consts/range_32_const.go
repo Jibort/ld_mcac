@@ -30,7 +30,7 @@ const (
 // Pendent de la codificació de 32b
 var (
 	Epsilon32 = float32(math.Pow(10, -Precision32))
-	Factor32  = math.Pow(10, Precision32)
+	Factor32  = float32(math.Pow(10, Precision32))
 )
 
 // Constants per Range64

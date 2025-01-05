@@ -1,4 +1,4 @@
-// Implementació del tipus RangeF64TwoPi utilitzant constants consolidades
+// Implementació del tipus F64RangeTwoPi (rang [-2·π, +2·π]) utilitzant constants consolidades
 // CreatedAt: 2024-12-27 dc. GPT(JIQ)
 
 package RF64
@@ -8,107 +8,109 @@ import (
 	"math"
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 	rngs "github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
-// Tipus RangeF64TwoPi representa el rang [-2·π, +2·π].
-type RangeF64TwoPi struct {
+// Tipus F64RangeTwoPi representa el rang [-2·π, +2·π].
+type F64RangeTwoPi struct {
 	rngs.F64RangeTwoPiIntf
 
-	v RangeF64
+	v F64Range
 }
 
-// NewRangeF64TwoPi crea una nova instància de RangeF64TwoPi amb validació del rang.
-func NewRangeF64TwoPi(value float64) RangeF64TwoPi {
+// NewF64RangeTwoPi crea una nova instància de F64RangeTwoPi amb validació del rang.
+func NewF64RangeTwoPi(value float64) F64RangeTwoPi {
 	if math.IsNaN(value) || math.IsInf(value, 0) || (value >= cs.Range64Configs.TwoPiF64.Max && value <= cs.Range64Configs.TwoPiF64.Max) {
-		return RangeF64TwoPi{v: RangeF64{value: value}}
+		return F64RangeTwoPi{v: F64Range{value: value}}
 	}
 	panic(fmt.Sprintf("valor fora del rang [-2·π, +2·π]: %f", value))
 }
 
 // INTERFÍCIE 'ClonableIntf' ----------
 // Clone retorna una còpia de la instància.
-func (sR642Pi RangeF64TwoPi) Clone() rngs.ClonableIntf {
-	return NewRangeF64TwoPi(sR642Pi.v.value)
+func (sR642Pi F64RangeTwoPi) Clone() base.RangeIntf {
+	res := NewF64RangeTwoPi(sR642Pi.v.value)
+	return &res
 }
 
 // INTERFÍCIE 'ComparableIntf' --------
 // Equals comprova si dos valors són iguals.
-func (sR642Pi RangeF64TwoPi) Equals(pOther rngs.ComparableIntf) bool {
+func (sR642Pi F64RangeTwoPi) Equals(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64RangeOne:
+	case *F64RangeOne:
 		return tools.Equals64(sR642Pi.AsFloat64(), other.AsFloat64(), &cs.Epsilon64)
-	case RangeF64TwoPi:
+	case *F64RangeTwoPi:
 		return tools.Equals64(sR642Pi.AsFloat64(), other.AsFloat64(), &cs.Epsilon64)
 	default:
-		panic(fmt.Sprintf("RangeF64TwoPi.Equals: tipus no vàlid: %T", pOther))
+		panic(fmt.Sprintf("F64RangeTwoPi.Equals: tipus no vàlid: %T", pOther))
 
 	}
 }
 
 // Cert només si la instància és menor que pOther.
-func (sR642Pi RangeF64TwoPi) LessThan(pOther rngs.ComparableIntf) bool {
+func (sR642Pi F64RangeTwoPi) LessThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64RangeOne:
+	case *F64RangeOne:
 		return sR642Pi.AsFloat64() < other.AsFloat64()
-	case RangeF64TwoPi:
+	case *F64RangeTwoPi:
 		return sR642Pi.AsFloat64() < other.AsFloat64()
 	default:
-		panic(fmt.Sprintf("RangeF64One.LessThan: tipus no vàlid: %T", pOther))
+		panic(fmt.Sprintf("F64RangeOne.LessThan: tipus no vàlid: %T", pOther))
 	}
 }
 
 // Cert només si la instància és menor o igual que pOther.
-func (sR642Pi RangeF64TwoPi) LessOrEqualThan(pOther rngs.ComparableIntf) bool {
+func (sR642Pi F64RangeTwoPi) LessOrEqualThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64RangeOne:
+	case *F64RangeOne:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
-	case RangeF64TwoPi:
+	case *F64RangeTwoPi:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
 	default:
-		panic(fmt.Sprintf("RangeF64One.LessOrEqualThan: tipus no vàlid: %T", pOther))
+		panic(fmt.Sprintf("F64RangeOne.LessOrEqualThan: tipus no vàlid: %T", pOther))
 	}
 }
 
 // Cert només si la instància és major que pOther.
-func (sR642Pi RangeF64TwoPi) GreaterThan(pOther rngs.ComparableIntf) bool {
+func (sR642Pi F64RangeTwoPi) GreaterThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64RangeOne:
+	case *F64RangeOne:
 		return sR642Pi.AsFloat64() > other.AsFloat64()
-	case RangeF64TwoPi:
+	case *F64RangeTwoPi:
 		return sR642Pi.AsFloat64() > other.AsFloat64()
 	default:
-		panic(fmt.Sprintf("RangeF64One.GreaterThan: tipus no vàlid: %T", pOther))
+		panic(fmt.Sprintf("F64RangeOne.GreaterThan: tipus no vàlid: %T", pOther))
 	}
 }
 
 // Cert només si la instància és major o igual que pOther.
-func (sR642Pi RangeF64TwoPi) GreaterOrEqualThan(pOther rngs.ComparableIntf) bool {
+func (sR642Pi F64RangeTwoPi) GreaterOrEqualThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
-	case F64RangeOne:
+	case *F64RangeOne:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
-	case RangeF64TwoPi:
+	case *F64RangeTwoPi:
 		return sR642Pi.LessThan(other) || sR642Pi.Equals(other)
 	default:
-		panic(fmt.Sprintf("RangeF64One.GreaterOrEqualThan: tipus no vàlid: %T", pOther))
+		panic(fmt.Sprintf("F64RangeOne.GreaterOrEqualThan: tipus no vàlid: %T", pOther))
 	}
 }
 
-func (sR642Pi RangeF64TwoPi) Is32() bool     { return false }
-func (sR642Pi RangeF64TwoPi) Is64() bool     { return true }
-func (sR642Pi RangeF64TwoPi) IsGroupB() bool { return false }
-func (sR642Pi RangeF64TwoPi) IsGroupC() bool { return false }
-func (sR642Pi RangeF64TwoPi) IsGroupD() bool { return false }
-func (sR642Pi RangeF64TwoPi) IsOne() bool    { return false }
-func (sR642Pi RangeF64TwoPi) IsTwoPit() bool { return true }
+func (sR642Pi F64RangeTwoPi) Is32() bool     { return false }
+func (sR642Pi F64RangeTwoPi) Is64() bool     { return true }
+func (sR642Pi F64RangeTwoPi) IsGroupB() bool { return false }
+func (sR642Pi F64RangeTwoPi) IsGroupC() bool { return false }
+func (sR642Pi F64RangeTwoPi) IsGroupD() bool { return false }
+func (sR642Pi F64RangeTwoPi) IsOne() bool    { return false }
+func (sR642Pi F64RangeTwoPi) IsTwoPit() bool { return true }
 
-func (sR642Pi RangeF64TwoPi) SetFloat64(pF64 float64) {
+func (sR642Pi *F64RangeTwoPi) SetFloat64(pF64 float64) {
 	sR642Pi.v.value = pF64
 }
 
 // IsGroupA verifica si el valor pertany al Grup A.
-func (sR642Pi RangeF64TwoPi) IsGroupA() bool {
+func (sR642Pi F64RangeTwoPi) IsGroupA() bool {
 	_, exponent, mantissa := tools.DecomposeF64(sR642Pi.v.value)
 
 	// Valors normals
@@ -129,67 +131,63 @@ func (sR642Pi RangeF64TwoPi) IsGroupA() bool {
 	return false
 }
 
-func (sR642Pi RangeF64TwoPi) AsFloat32() float32 {
+func (sR642Pi F64RangeTwoPi) AsFloat32() float32 {
 	return float32(sR642Pi.v.value)
 }
 
-func (sR642Pi RangeF64TwoPi) AsFloat64() float64 {
+func (sR642Pi F64RangeTwoPi) AsFloat64() float64 {
 	return sR642Pi.v.value
 }
 
-func (sR642Pi RangeF64TwoPi) AsUint32() uint32 {
-	panic("Encara no implementat!: func (sR642Pi RangeF64TwoPi) AsUint32() uint32")
+func (sR642Pi F64RangeTwoPi) AsUint32() uint32 {
+	panic("Encara no implementat!: func (sR642Pi F64RangeTwoPi) AsUint32() uint32")
 }
 
-func (sR642Pi RangeF64TwoPi) AsUint64() uint64 {
+func (sR642Pi F64RangeTwoPi) AsUint64() uint64 {
 	return tools.F64ToU64(sR642Pi.v.value)
 }
 
-func (sR642Pi RangeF64TwoPi) SetUint32(value uint32) {
-	panic("Encara no implementat!: func (sR642Pi RangeF64TwoPi) SetUint32(value uint32)")
+func (sR642Pi *F64RangeTwoPi) SetUint32(value uint32) {
+	panic("Encara no implementat!: func (sR642Pi F64RangeTwoPi) SetUint32(value uint32)")
 }
 
-func (sR642Pi RangeF64TwoPi) SetUint64(value uint64) {
+func (sR642Pi *F64RangeTwoPi) SetUint64(value uint64) {
 	sR642Pi.v.value = tools.U64ToF64(value)
 }
 
-func (sR642Pi RangeF64TwoPi) Clone() rngs.RangeIntf {
-	return *NewRangeF64TwoPi(sR642Pi.v.value)
-}
-
-// Add suma dos RangeF64TwoPi i retorna un nou valor saturat dins del rang.
-func (sR64One RangeF64TwoPi) Add(other RangeF64TwoPi) RangeF64TwoPi {
-	result := sR642Pi.v.value + other.value
+// Add suma dos F64RangeTwoPi i retorna un nou valor saturat dins del rang.
+func (sR64One F64RangeTwoPi) Add(other F64RangeTwoPi) F64RangeTwoPi {
+	result := sR64One.AsFloat64() + sR64One.AsFloat64()
 	if result > cs.Range64Configs.TwoPiF64.Max {
 		result = cs.Range64Configs.TwoPiF64.Max
 	} else if result < cs.Range64Configs.TwoPiF64.Min {
 		result = cs.Range64Configs.TwoPiF64.Min
 	}
-	return RangeF64TwoPi{value: result}
+	return NewF64RangeTwoPi(result)
 }
 
 // IsInfinitePos comprova si el valor és +Inf.
-func (sR64One RangeF64TwoPi) IsInfinitePos() bool {
-	return math.IsInf(sR642Pi.v.value, 1)
+func (sR64One F64RangeTwoPi) IsInfinitePos() bool {
+	return math.IsInf(sR64One.AsFloat64(), 1)
 }
 
 // IsInfiniteNeg comprova si el valor és -Inf.
-func (sR64One RangeF64TwoPi) IsInfiniteNeg() bool {
-	return math.IsInf(sR642Pi.v.value, -1)
+func (sR64One F64RangeTwoPi) IsInfiniteNeg() bool {
+	return math.IsInf(sR64One.AsFloat64(), -1)
 }
 
 // IsInfinite comprova si el valor és infinit (positiu o negatiu).
-func (sR64One RangeF64TwoPi) IsInfinite() bool {
-	return math.IsInf(sR642Pi.v.value, 0)
+func (sR64One F64RangeTwoPi) IsInfinite() bool {
+	return math.IsInf(sR64One.AsFloat64(), 0)
 }
 
 // GetF64Value retorna el valor float64.
-func (sR64One RangeF64TwoPi) GetF64Value() float64 {
-	return sR642Pi.v.value
+func (sR64One F64RangeTwoPi) GetF64Value() float64 {
+	return sR64One.AsFloat64()
 }
 
 // SetF64Value modifica el valor float64 i retorna l'instància actualitzada.
-func (sR64One *RangeF64TwoPi) SetF64Value(value float64) RangeF64TwoPi {
-	sR642Pi.v.value = value
+func (sR64One *F64RangeTwoPi) SetF64Value(pF64 float64) F64RangeTwoPi {
+	sR64One.v.value = tools.Quantize64One(pF64)
 	return *sR64One
 }
