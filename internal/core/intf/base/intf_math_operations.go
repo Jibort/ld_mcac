@@ -5,7 +5,7 @@ package base
 
 // Interfície 'MathOperationsIntf'
 type MathOperationsIntf interface {
-	ComparableIntf
+	// ComparableIntf
 
 	Add(pOther RangeIntf) RangeIntf
 	Sub(pOther RangeIntf) RangeIntf
