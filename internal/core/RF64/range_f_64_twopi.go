@@ -1,13 +1,13 @@
 // Implementació del tipus F64RangeTwoPi (rang [-2·π, +2·π]) utilitzant constants consolidades
 // CreatedAt: 2024-12-27 dc. GPT(JIQ)
 
-package RF64
+package rf64
 
 import (
 	"fmt"
 	"math"
 
-	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	cs "github.com/jibort/ld_mcac/internal/core/consts"
 	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 	rngs "github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
@@ -23,7 +23,7 @@ type F64RangeTwoPi struct {
 // NewF64RangeTwoPi crea una nova instància de F64RangeTwoPi amb validació del rang.
 func NewF64RangeTwoPi(value float64) F64RangeTwoPi {
 	if math.IsNaN(value) || math.IsInf(value, 0) || (value >= cs.Range64Configs.TwoPiF64.Max && value <= cs.Range64Configs.TwoPiF64.Max) {
-		return F64RangeTwoPi{v: F64Range{value: value}}
+		return F64RangeTwoPi{v: F64Range{Value: value}}
 	}
 	panic(fmt.Sprintf("valor fora del rang [-2·π, +2·π]: %f", value))
 }
@@ -31,7 +31,7 @@ func NewF64RangeTwoPi(value float64) F64RangeTwoPi {
 // INTERFÍCIE 'ClonableIntf' ----------
 // Clone retorna una còpia de la instància.
 func (sR642Pi F64RangeTwoPi) Clone() base.RangeIntf {
-	res := NewF64RangeTwoPi(sR642Pi.v.value)
+	res := NewF64RangeTwoPi(sR642Pi.v.Value)
 	return &res
 }
 
@@ -106,16 +106,16 @@ func (sR642Pi F64RangeTwoPi) IsOne() bool    { return false }
 func (sR642Pi F64RangeTwoPi) IsTwoPit() bool { return true }
 
 func (sR642Pi *F64RangeTwoPi) SetFloat64(pF64 float64) {
-	sR642Pi.v.value = pF64
+	sR642Pi.v.Value = pF64
 }
 
 // IsGroupA verifica si el valor pertany al Grup A.
 func (sR642Pi F64RangeTwoPi) IsGroupA() bool {
-	_, exponent, mantissa := tools.DecomposeF64(sR642Pi.v.value)
+	_, exponent, mantissa := tools.DecomposeF64(sR642Pi.v.Value)
 
 	// Valors normals
 	if exponent >= 1 && exponent <= 2046 {
-		return sR642Pi.v.value >= cs.Range64Configs.TwoPiF64.Min && sR642Pi.v.value <= cs.Range64Configs.TwoPiF64.Max
+		return sR642Pi.v.Value >= cs.Range64Configs.TwoPiF64.Min && sR642Pi.v.Value <= cs.Range64Configs.TwoPiF64.Max
 	}
 
 	// Valors subnormals
@@ -132,7 +132,7 @@ func (sR642Pi F64RangeTwoPi) IsGroupA() bool {
 }
 
 func (sR642Pi F64RangeTwoPi) AsFloat32() float32 {
-	return float32(sR642Pi.v.value)
+	return float32(sR642Pi.v.Value)
 }
 
 // func (sR642Pi F64RangeTwoPi) AsFloat64() float64 {
@@ -144,7 +144,7 @@ func (sR642Pi F64RangeTwoPi) AsUint32() uint32 {
 }
 
 func (sR642Pi F64RangeTwoPi) AsUint64() uint64 {
-	return tools.F64ToU64(sR642Pi.v.value)
+	return tools.F64ToU64(sR642Pi.v.Value)
 }
 
 func (sR642Pi *F64RangeTwoPi) SetUint32(value uint32) {
@@ -152,7 +152,7 @@ func (sR642Pi *F64RangeTwoPi) SetUint32(value uint32) {
 }
 
 func (sR642Pi *F64RangeTwoPi) SetUint64(value uint64) {
-	sR642Pi.v.value = tools.U64ToF64(value)
+	sR642Pi.v.Value = tools.U64ToF64(value)
 }
 
 // Add suma dos F64RangeTwoPi i retorna un nou valor saturat dins del rang.
@@ -188,6 +188,6 @@ func (sR64One F64RangeTwoPi) GetF64Value() float64 {
 
 // SetF64Value modifica el valor float64 i retorna l'instància actualitzada.
 func (sR64One *F64RangeTwoPi) SetF64Value(pF64 float64) F64RangeTwoPi {
-	sR64One.v.value = tools.Quantize64One(pF64)
+	sR64One.v.Value = tools.Quantize64One(pF64)
 	return *sR64One
 }

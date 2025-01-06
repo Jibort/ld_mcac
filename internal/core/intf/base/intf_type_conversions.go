@@ -3,8 +3,8 @@
 
 package base
 
-// Interfície 'TypeConversionsIntf'
-type TypeConversionsIntf interface {
+// Interfície 'ConversionsIntf'
+type ConversionsIntf interface {
 	AsFloat64() float64
 	SetFloat64(float64)
 	AsUint64() uint64

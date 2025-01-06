@@ -4,8 +4,8 @@
 package neural
 
 import (
-	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
 	base "github.com/jibort/ld_mcac/internal/core/intf/base"
+	rF64 "github.com/jibort/ld_mcac/internal/core/rf64"
 )
 
 type Synapse struct {

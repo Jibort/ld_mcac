@@ -6,18 +6,33 @@ package main
 import (
 	"fmt"
 
-	f64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	rF64 "github.com/jibort/ld_mcac/internal/core/rf64"
 )
 
 func main() {
-	one := f64.NewF64RangeOne(0.123456789)
-	fmt.Printf("One: %.9f\n", one.V.AsFloat64())
-	one = *one.Add(&one).(*f64.F64RangeOne)
-	fmt.Printf("Add: %.9f\n", one.V.AsFloat64())
+	one := rF64.NewF64RangeOne(0.123456789)
+	mone := rF64.NewF64RangeOne(-0.123456789)
+	half := rF64.NewF64RangeOne(0.5)
+	// mhalf := rF64.NewF64RangeOne(-0.5)
+	zero := rF64.NewF64RangeOne(0.0)
+	fmt.Printf("One: %.9f\n", one.AsFloat64())
+	one = *one.Add(&one).(*rF64.F64RangeOne)
+	fmt.Printf("Add: %.9f\n", one.AsFloat64())
+	one = *one.Sub(&one).(*rF64.F64RangeOne)
+	one = *one.Add(&mone).(*rF64.F64RangeOne)
+	fmt.Printf("Add: %.9f\n", one.AsFloat64())
+	one = *one.Mul(&one).(*rF64.F64RangeOne)
+	fmt.Printf("Mul: %.9f\n", one.AsFloat64())
+	one = *one.Mul(&half).(*rF64.F64RangeOne)
+	fmt.Printf("Mul: %.9f\n", one.AsFloat64())
+	one = *one.Div(&one).(*rF64.F64RangeOne)
+	fmt.Printf("Div: %.9f\n", one.AsFloat64())
+	one = *one.Div(&zero).(*rF64.F64RangeOne)
+	fmt.Printf("Div: %.9f\n", one.AsFloat64())
 }
 
-// f64_2p "github.com/jibort/ld_mcac/internal/core/RF642Pi"
-// f64_1 "github.com/jibort/ld_mcac/internal/core/RF64One"
+// f64_2p "github.com/jibort/ld_mcac/internal/core/rF642Pi"
+// f64_1 "github.com/jibort/ld_mcac/internal/core/rF64One"
 
 // Tipus definit per RangF64 ja existent en un altre fitxer
 

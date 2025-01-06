@@ -1,7 +1,7 @@
 // Implementació dels valors Range en uint32.
 // CreatedAt: 2024/12/08 dg. JIQ
 
-package RU32
+package ru32
 
 // import (
 // 	intf "github.com/jibort/ld_mcac/internal/core/intf"

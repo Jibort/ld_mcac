@@ -7,7 +7,7 @@ import (
 	"math"
 	"testing"
 
-	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	rF64 "github.com/jibort/ld_mcac/internal/core/rf64"
 )
 
 func TestNewRange64(t *testing.T) {

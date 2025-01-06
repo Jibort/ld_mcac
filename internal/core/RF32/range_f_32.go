@@ -1,12 +1,12 @@
 // Implementació dels valors Range en float32.
 // CreatedAt: 2024/12/08 dg. JIQ
 
-package RF32
+package rf32
 
 import (
 	"math"
 
-	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	cs "github.com/jibort/ld_mcac/internal/core/consts"
 	base "github.com/jibort/ld_mcac/internal/core/intf/base"
 	"github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	intf "github.com/jibort/ld_mcac/internal/core/intf/ranges"

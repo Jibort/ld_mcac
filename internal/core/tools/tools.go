@@ -10,7 +10,7 @@ import (
 	"strings"
 	"unsafe"
 
-	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	cs "github.com/jibort/ld_mcac/internal/core/consts"
 )
 
 // QUANTITZACIÓ -----------------------
@@ -211,12 +211,27 @@ func DecomposeF64(value float64) (sign int, exponent int, mantissa uint64) {
 }
 
 // COMPARACIONS AMB 'float' -----------
+// Retorna cert només si el valor és inferiora pEpsilon.
+func IsZero64(pVal float64, pEpsilon *float64) bool {
+	if pEpsilon == nil {
+		pEpsilon = &cs.Epsilon64
+	}
+	return math.Abs(pVal) < *pEpsilon
+}
+
 // Retorna cert només si la diferència entre pA i pB és inferior a pEpsilon.
-func Equals64(pA, pB float64, pEpsilon *float64) (rEquals bool) {
+func Equals64(pA, pB float64, pEpsilon *float64) bool {
 	if pEpsilon == nil {
 		pEpsilon = &cs.Epsilon64
 	}
 	return math.Abs(pA-pB) < *pEpsilon
+}
+
+func IsZero32(pVal float32, pEpsilon *float32) bool {
+	if pEpsilon == nil {
+		pEpsilon = &cs.Epsilon32
+	}
+	return float32(math.Abs(float64(pVal))) < *pEpsilon
 }
 
 func Equals32(pA, pB float32, pEpsilon *float32) (rEquals bool) {

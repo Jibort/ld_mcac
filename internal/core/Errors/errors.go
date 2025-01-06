@@ -4,7 +4,7 @@
 package errors
 
 import (
-	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	cs "github.com/jibort/ld_mcac/internal/core/consts"
 )
 
 func E_Unknown(pArgs uint64) Error {

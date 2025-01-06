@@ -1,107 +1,50 @@
 // Definició i implementació de funcions generals per X64Range
 // CreatedAt: 2024-12-27 dc. GPT(JIQ)
 
-package R64
+package r64
 
 import (
-	base "github.com/jibort/ld_mcac/internal/core/intf/base"
-	i64 "github.com/jibort/ld_mcac/internal/core/intf/ranges"
+	r "github.com/jibort/ld_mcac/internal/core/r"
 )
 
 // ESTRUCUTURES -----------------------
 // X64Range representa un tipus especialitzat de 64 bits.
 type X64Range struct {
-	i64.F64RangeIntf
+	// i64.F64RangeIntf
+	r.Range
 }
 
-func (m X64Range) AsFloat64() float64 {
-	panic("_64Range.AsFloat64: Not implemented") // TODO: Implement
-}
-
-func (m *X64Range) SetFloat64(_ float64) {
-	panic("_64Range.SetFloat64: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) AsUint64() uint64 {
-	panic("_64Range.AsUint64: Not implemented") // TODO: Implement
-}
-
-func (m *X64Range) SetUint64(_ uint64) {
-	panic("_64Range.SetUint64: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) AsFloat32() float32 {
-	panic("_64Range.AsFloat32: Not implemented") // TODO: Implement
-}
-
-func (m *X64Range) SetFloat32(_ float32) {
-	panic("_64Range.SetFloat32: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) AsUint32() uint32 {
-	panic("_64Range.AsUint32: Not implemented") // TODO: Implement
-}
-
-func (m *X64Range) SetUint32(_ uint32) {
-	panic("_64Range.SetUint32: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) Clone() base.ClonableIntf {
-	panic("_64Range.Clone: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) Equals(pOther base.ComparableIntf) bool {
-	panic("_64Range.Equals: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) LessThan(pOther base.ComparableIntf) bool {
-	panic("_64Range.LessThan: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) LessOrEqualThan(pOther base.ComparableIntf) bool {
-	panic("_64Range.LessOrEqualThan: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) GreaterThan(pOther base.ComparableIntf) bool {
-	panic("_64Range.GreaterThan: Not implemented") // TODO: Implement
-}
-
-func (m X64Range) GreaterOrEqualThan(pOther base.ComparableIntf) bool {
-	panic("_64Range.GreaterOrEqualThan: Not implemented") // TODO: Implement
-}
-
-// Blocs
 func (m X64Range) Is64() bool {
-	panic("_64Range.Is64: Not implemented") // TODO: Implement
+	return true
 }
 
 func (m X64Range) Is32() bool {
-	panic("_64Range.Is32: Not implemented") // TODO: Implement
+	return false
 }
 
 func (m X64Range) IsError() bool {
-	panic("_64Range.IsError: Not implemented") // TODO: Implement
+	return false
 }
 
 // Grups
 func (m X64Range) IsGroupA() bool {
-	panic("_64Range.IsGroupA: Not implemented") // TODO: Implement
+	return false
 }
 
 func (m X64Range) IsGroupB() bool {
-	panic("_64Range.IsGroupB: Not implemented") // TODO: Implement
+	return false
 }
 
 func (m X64Range) IsGroupC() bool {
-	panic("_64Range.IsGroupC: Not implemented") // TODO: Implement
+	return false
 }
 
 func (m X64Range) IsGroupD() bool {
-	panic("_64Range.IsGroupD: Not implemented") // TODO: Implement
+	return false
 }
 
 func (m X64Range) IsGroupE() bool {
-	panic("_64Range.IsGroupE: Not implemented") // TODO: Implement
+	return false
 }
 
 // // INTERFÍCIE 'ComparableIntf' --------

@@ -1,13 +1,13 @@
 // // Implementació del tipus RangeF64TwoPi utilitzant constants consolidades
 // // CreatedAt: 2024-12-27 dc. GPT(JIQ)
 
-package RF642Pi
+package rf642Pi
 
 // import (
 // 	"fmt"
 // 	"math"
 
-// 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+// 	cs "github.com/jibort/ld_mcac/internal/core/consts"
 // 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 // )
 

@@ -2,33 +2,34 @@
 // Implementació dels valors Range en float64.
 // CreatedAt: 2024/12/08 dg. JIQ
 
-package RF64
+package rf64
 
 import (
 	"fmt"
 
-	cs "github.com/jibort/ld_mcac/internal/core/Consts"
+	cs "github.com/jibort/ld_mcac/internal/core/consts"
 	base "github.com/jibort/ld_mcac/internal/core/intf/base"
-	i64 "github.com/jibort/ld_mcac/internal/core/intf/ranges"
+	r64 "github.com/jibort/ld_mcac/internal/core/r64"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 // ESTRUCTURES ------------------------
 // Tipus pels Range float64.
 type F64Range struct {
-	i64.F64RangeIntf
-	value float64
+	// i64.F64RangeIntf
+	r64.X64Range
+	Value float64
 }
 
 // CONSTRUCTORS =======================
 // Constructor general a partir d'un valor float64 (64bits).
 func NewF64Range(pF64 float64) F64Range {
-	return F64Range{value: pF64}
+	return F64Range{Value: pF64}
 }
 
 // Constructor a partir d'un uint64 (64bits).
 func NewF64RangeFromU64(pU64 uint64) F64Range {
-	return F64Range{value: tools.U64ToF64(pU64)}
+	return F64Range{Value: tools.U64ToF64(pU64)}
 }
 
 // Constructor de F64Range per a 0.0.
@@ -37,7 +38,7 @@ func NewF64RangeZero() F64Range {
 }
 
 // INTERFÍCIES ========================
-// INTERDÍCIE 'ClonableIntf'
+// INTERFÍCIE 'ClonableIntf'
 func (sRF64 F64Range) Clone() base.RangeIntf {
 	res := NewF64Range(sRF64.AsFloat64())
 	return &res
@@ -45,11 +46,11 @@ func (sRF64 F64Range) Clone() base.RangeIntf {
 
 // INTERFÍCIE 'TypeConversionIntf' ----
 func (sRF64 F64Range) AsFloat64() float64 {
-	return sRF64.value
+	return sRF64.Value
 }
 
 func (sRF64 *F64Range) SetFloat64(pF64 float64) {
-	sRF64.value = pF64
+	sRF64.Value = pF64
 }
 
 func (sRF64 F64Range) AsUint64() uint64 {
@@ -60,24 +61,24 @@ func (sRF64 *F64Range) SetUint64(pU64 uint64) {
 	sRF64.SetFloat64(tools.U64ToF64(pU64))
 }
 
-// func (sRF64 F64Range) AsFloat32() float32 {
-// 	panic("F64Range.AsFloat32: Not implemented") // TODO: Implement
-// }
-// func (sRF64 *F64Range) SetFloat32(_ float32) {
-// 	panic("F64Range.SetFloat32: Not implemented") // TODO: Implement
-// }
-// func (sRF64 F64Range) AsUint32() uint32 {
-// 	panic("F64Range.AsUint32: Not implemented") // TODO: Implement
-// }
-// func (sRF64 *F64Range) SetUint32(_ uint32) {
-// 	panic("F64Range.SetUint32: Not implemented") // TODO: Implement
-// }
+func (sRF64 F64Range) AsFloat32() float32 {
+	panic("F64Range.AsFloat32: Not implemented") // TODO: Implement
+}
+func (sRF64 *F64Range) SetFloat32(_ float32) {
+	panic("F64Range.SetFloat32: Not implemented") // TODO: Implement
+}
+func (sRF64 F64Range) AsUint32() uint32 {
+	panic("F64Range.AsUint32: Not implemented") // TODO: Implement
+}
+func (sRF64 *F64Range) SetUint32(_ uint32) {
+	panic("F64Range.SetUint32: Not implemented") // TODO: Implement
+}
 
 // INTERFÍCIE 'ComparableIntf' --------
 func (sRF64 F64Range) Equals(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
 	case *F64Range:
-		return tools.Equals64(sRF64.value, other.value, &cs.Epsilon64)
+		return tools.Equals64(sRF64.Value, other.Value, &cs.Epsilon64)
 	default:
 		panic(fmt.Sprintf("F64Range.Equals: Invalid type %T", pOther))
 	}
@@ -86,7 +87,7 @@ func (sRF64 F64Range) Equals(pOther base.RangeIntf) bool {
 func (sRF64 F64Range) LessThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
 	case *F64Range:
-		return sRF64.value < other.value
+		return sRF64.Value < other.Value
 	default:
 		panic(fmt.Sprintf("F64Range.LessThan: Invalid type %T", pOther))
 	}
@@ -99,7 +100,7 @@ func (sRF64 F64Range) LessOrEqualThan(pOther base.RangeIntf) bool {
 func (sRF64 F64Range) GreaterThan(pOther base.RangeIntf) bool {
 	switch other := pOther.(type) {
 	case *F64Range:
-		return sRF64.value > other.value
+		return sRF64.Value > other.Value
 	default:
 		panic(fmt.Sprintf("F64Range.GreaterThan: Invalid type %T", pOther))
 	}

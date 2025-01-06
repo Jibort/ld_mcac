@@ -4,7 +4,7 @@
 package neural
 
 import (
-	rF64 "github.com/jibort/ld_mcac/internal/core/RF64"
+	rF64 "github.com/jibort/ld_mcac/internal/core/rf64"
 	dset "github.com/jibort/ld_mcac/internal/neural/dataset"
 )
 
