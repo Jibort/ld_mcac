@@ -3,6 +3,19 @@
 
 package main
 
+import (
+	"fmt"
+
+	f64 "github.com/jibort/ld_mcac/internal/core/RF64"
+)
+
+func main() {
+	one := f64.NewF64RangeOne(0.123456789)
+	fmt.Printf("One: %.9f\n", one.V.AsFloat64())
+	one = *one.Add(&one).(*f64.F64RangeOne)
+	fmt.Printf("Add: %.9f\n", one.V.AsFloat64())
+}
+
 // f64_2p "github.com/jibort/ld_mcac/internal/core/RF642Pi"
 // f64_1 "github.com/jibort/ld_mcac/internal/core/RF64One"
 

@@ -12,6 +12,13 @@
             "program": "${file}"
         },
         {
+            "name": "Debug",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${file}"
+        },
+        {
             "name": "Full Tests",
             "type": "go",
             "request": "launch",

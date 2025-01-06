@@ -9,21 +9,30 @@ import (
 
 	cs "github.com/jibort/ld_mcac/internal/core/Consts"
 	base "github.com/jibort/ld_mcac/internal/core/intf/base"
-	intf "github.com/jibort/ld_mcac/internal/core/intf/ranges"
+	f64 "github.com/jibort/ld_mcac/internal/core/intf/ranges"
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
 // Tipus F64RangeOne representa el rang [-1.0, +1.0].
 type F64RangeOne struct {
-	intf.F64RangeOneIntf
-	v F64Range
+	f64.F64RangeOneIntf
+	V F64Range
 }
 
 // CONSTRUCTORS ------------------------
+func newRangeF64One(value float64) F64RangeOne {
+	f64 := F64Range{value: value}
+	f64One := F64RangeOne{V: f64}
+	f64One.F64RangeOneIntf = &f64One
+
+	return f64One
+}
+
 // NewF64RangeOne crea una nova instància de F64RangeOne amb validació del rang.
 func NewF64RangeOne(value float64) F64RangeOne {
-	if math.IsNaN(value) || math.IsInf(value, 0) || (value >= cs.Range64Configs.OneF64.Max && value <= cs.Range64Configs.OneF64.Max) {
-		return F64RangeOne{v: F64Range{value: value}}
+	if math.IsNaN(value) || math.IsInf(value, 0) || (value >= cs.Range64Configs.OneF64.Min && value <= cs.Range64Configs.OneF64.Max) {
+		return newRangeF64One(value)
+
 	}
 	panic(fmt.Sprintf("NewF64RangeOne: valor fora del rang [-1.0, +1.0]: %f", value))
 }
@@ -32,7 +41,7 @@ func NewF64RangeOne(value float64) F64RangeOne {
 // INTERFÍCIE 'ClonableIntf' ----------
 // Clone retorna una còpia de la instància.
 func (sR64One F64RangeOne) Clone() base.RangeIntf {
-	res := NewF64RangeOne(sR64One.v.value)
+	res := NewF64RangeOne(sR64One.V.value)
 	return &res
 }
 
@@ -103,18 +112,19 @@ func (sR64One F64RangeOne) Is64() bool     { return true }
 func (sR64One F64RangeOne) IsGroupB() bool { return false }
 func (sR64One F64RangeOne) IsGroupC() bool { return false }
 func (sR64One F64RangeOne) IsGroupD() bool { return false }
-func (sR64One *F64RangeOne) SetFloat64(pF64 float64) {
-	sR64One.v.value = pF64
-}
+
+// func (sR64One *F64RangeOne) SetFloat64(pF64 float64) {
+// 	sR64One.v.value = pF64
+// }
 
 // INTERFÍCIE 'RangeIntf' -------------
 // IsGroupA verifica si el valor pertany al Grup A.
 func (sR64One F64RangeOne) IsGroupA() bool {
-	_, exponent, mantissa := tools.DecomposeF64(sR64One.v.value)
+	_, exponent, mantissa := tools.DecomposeF64(sR64One.V.value)
 
 	// Valors normals
 	if exponent >= 1 && exponent <= 2046 {
-		return sR64One.v.value >= cs.Range64Configs.OneF64.Min && sR64One.v.value <= cs.Range64Configs.OneF64.Max
+		return sR64One.V.value >= cs.Range64Configs.OneF64.Min && sR64One.V.value <= cs.Range64Configs.OneF64.Max
 	}
 
 	// Valors subnormals
@@ -131,64 +141,72 @@ func (sR64One F64RangeOne) IsGroupA() bool {
 }
 
 func (sR64One F64RangeOne) AsFloat32() float32 {
-	return float32(sR64One.v.value)
+	return float32(sR64One.V.value)
 }
 
-func (sR64One F64RangeOne) AsFloat64() float64 {
-	return sR64One.v.value
-}
+// func (sR64One F64RangeOne) AsFloat64() float64 {
+// 	return sR64One.v.value
+// }
 
 func (sT64One F64RangeOne) AsUint32() uint32 {
 	panic("F64RangeOne) AsUint32(): TODO: Encara no implementada!")
 }
 
 func (sT64One F64RangeOne) AsUint64() uint64 {
-	return tools.F64ToU64(sT64One.v.value)
+	return tools.F64ToU64(sT64One.V.value)
 }
 
 func (sT64One *F64RangeOne) SetUint32(value uint32) {
-	sT64One.SetF64Value(float64(value))
+	sT64One.SetFloat64(float64(value))
 }
 
 func (sT64One *F64RangeOne) SetUint64(value uint64) {
-	sT64One.SetF64Value(tools.U64ToF64(value))
+	sT64One.SetFloat64(tools.U64ToF64(value))
 }
 
 // INTERFÍCIE 'MathOperationsIntf' ----
 // Add suma dos F64RangeOne i retorna un nou valor saturat dins del rang.
-func (sR64One F64RangeOne) Add(other F64RangeOne) F64RangeOne {
-	result := sR64One.v.value + other.v.value
+func (sR64One F64RangeOne) Add(pOther base.RangeIntf) base.RangeIntf {
+	var result float64
+	switch other := pOther.(type) {
+	case *F64RangeOne:
+		result = sR64One.V.value + other.V.value
+	default:
+		tools.FPanic("F64RangeOne.Add: Invalid parameter type %T", pOther)
+	}
+
 	if result > cs.Range64Configs.OneF64.Max {
 		result = cs.Range64Configs.OneF64.Max
 	} else if result < cs.Range64Configs.OneF64.Min {
 		result = cs.Range64Configs.OneF64.Min
 	}
-	return NewF64RangeOne(result)
+	f64o := NewF64RangeOne(result)
+	return &f64o
 }
 
 // INTERFÍCIE 'F64RangeOneIntf' -------
 // Cert només si el valor és negatiu.
 func (sR64One F64RangeOne) Sign() bool {
-	return sR64One.v.value < 0.0
+	return sR64One.AsFloat64() < 0.0
 }
 
 // IsInfinitePos comprova si el valor és +Inf.
 func (sR64One F64RangeOne) IsInfinitePos() bool {
-	return math.IsInf(sR64One.v.value, 1)
+	return math.IsInf(sR64One.AsFloat64(), 1)
 }
 
 // IsInfiniteNeg comprova si el valor és -Inf.
 func (sR64One F64RangeOne) IsInfiniteNeg() bool {
-	return math.IsInf(sR64One.v.value, -1)
+	return math.IsInf(sR64One.V.value, -1)
 }
 
 // IsInfinite comprova si el valor és infinit (positiu o negatiu).
 func (sR64One F64RangeOne) IsInfinite() bool {
-	return math.IsInf(sR64One.v.value, 0)
+	return math.IsInf(sR64One.AsFloat64(), 0)
 }
 
 // SetF64Value modifica el valor float64 i retorna l'instància actualitzada.
-func (sR64One *F64RangeOne) SetF64Value(value float64) F64RangeOne {
-	sR64One.v.value = value
-	return *sR64One
-}
+// func (sR64One *F64RangeOne) SetF64Value(value float64) F64RangeOne {
+// 	sR64One.v.value = value
+// 	return *sR64One
+// }

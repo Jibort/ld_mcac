@@ -135,9 +135,9 @@ func (sR642Pi F64RangeTwoPi) AsFloat32() float32 {
 	return float32(sR642Pi.v.value)
 }
 
-func (sR642Pi F64RangeTwoPi) AsFloat64() float64 {
-	return sR642Pi.v.value
-}
+// func (sR642Pi F64RangeTwoPi) AsFloat64() float64 {
+// 	return sR642Pi.v.value
+// }
 
 func (sR642Pi F64RangeTwoPi) AsUint32() uint32 {
 	panic("Encara no implementat!: func (sR642Pi F64RangeTwoPi) AsUint32() uint32")

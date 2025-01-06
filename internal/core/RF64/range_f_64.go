@@ -43,6 +43,11 @@ func (sRF64 F64Range) Clone() base.RangeIntf {
 	return &res
 }
 
+// INTERFÍCIE 'TypeConversionIntf' ----
+func (sRF64 F64Range) AsFloat64() float64 {
+	return sRF64.value
+}
+
 func (sRF64 *F64Range) SetFloat64(pF64 float64) {
 	sRF64.value = pF64
 }
@@ -55,21 +60,18 @@ func (sRF64 *F64Range) SetUint64(pU64 uint64) {
 	sRF64.SetFloat64(tools.U64ToF64(pU64))
 }
 
-func (sRF64 F64Range) AsFloat32() float32 {
-	panic("F64Range.AsFloat32: Not implemented") // TODO: Implement
-}
-
-func (sRF64 *F64Range) SetFloat32(_ float32) {
-	panic("F64Range.SetFloat32: Not implemented") // TODO: Implement
-}
-
-func (sRF64 F64Range) AsUint32() uint32 {
-	panic("F64Range.AsUint32: Not implemented") // TODO: Implement
-}
-
-func (sRF64 *F64Range) SetUint32(_ uint32) {
-	panic("F64Range.SetUint32: Not implemented") // TODO: Implement
-}
+// func (sRF64 F64Range) AsFloat32() float32 {
+// 	panic("F64Range.AsFloat32: Not implemented") // TODO: Implement
+// }
+// func (sRF64 *F64Range) SetFloat32(_ float32) {
+// 	panic("F64Range.SetFloat32: Not implemented") // TODO: Implement
+// }
+// func (sRF64 F64Range) AsUint32() uint32 {
+// 	panic("F64Range.AsUint32: Not implemented") // TODO: Implement
+// }
+// func (sRF64 *F64Range) SetUint32(_ uint32) {
+// 	panic("F64Range.SetUint32: Not implemented") // TODO: Implement
+// }
 
 // INTERFÍCIE 'ComparableIntf' --------
 func (sRF64 F64Range) Equals(pOther base.RangeIntf) bool {
@@ -109,11 +111,11 @@ func (sRF64 F64Range) GreaterOrEqualThan(pOther base.RangeIntf) bool {
 
 // INTERFÍCIE 'RangeIntf' -------------
 func (sRF64 F64Range) Is64() bool {
-	panic("F64Range.Is64: Not implemented") // TODO: Implement
+	return true
 }
 
 func (sRF64 F64Range) Is32() bool {
-	panic("F64Range.Is32: Not implemented") // TODO: Implement
+	return false
 }
 
 // Retorna cert només si el F64Range representa un error.
@@ -121,25 +123,21 @@ func (sRF64 F64Range) IsError() bool {
 	return false
 }
 
-func (sRF64 F64Range) IsGroupA() bool {
-	panic("F64Range.IsGroupA: Not implemented") // TODO: Implement
-}
-
-func (sRF64 F64Range) IsGroupB() bool {
-	panic("F64Range.IsGroupB: Not implemented") // TODO: Implement
-}
-
-func (sRF64 F64Range) IsGroupC() bool {
-	panic("F64Range.IsGroupC: Not implemented") // TODO: Implement
-}
-
-func (sRF64 F64Range) IsGroupD() bool {
-	panic("F64Range.IsGroupD: Not implemented") // TODO: Implement
-}
-
-func (sRF64 F64Range) IsGroupE() bool {
-	panic("F64Range.IsGroupE: Not implemented") // TODO: Implement
-}
+// func (sRF64 F64Range) IsGroupA() bool {
+// 	panic("F64Range.IsGroupA: Not implemented") // TODO: Implement
+// }
+// func (sRF64 F64Range) IsGroupB() bool {
+// 	panic("F64Range.IsGroupB: Not implemented") // TODO: Implement
+// }
+// func (sRF64 F64Range) IsGroupC() bool {
+// 	panic("F64Range.IsGroupC: Not implemented") // TODO: Implement
+// }
+// func (sRF64 F64Range) IsGroupD() bool {
+// 	panic("F64Range.IsGroupD: Not implemented") // TODO: Implement
+// }
+// func (sRF64 F64Range) IsGroupE() bool {
+// 	panic("F64Range.IsGroupE: Not implemented") // TODO: Implement
+// }
 
 // func NewF64RangeNull() F64Range {
 // 	// Basat en la documentació del Grup B, Subgrup ±Saturació i Nul

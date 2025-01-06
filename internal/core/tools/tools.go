@@ -234,3 +234,8 @@ func ApplyMask64(pValue uint64, pMask uint64) (rU64 uint64) {
 func ApplyMask32(pValue uint32, pMask uint32) (rU32 uint32) {
 	return (pValue | pMask) & pMask
 }
+
+// PANICS -----------------------------
+func FPanic(pMsg string, pArgs ...any) {
+	panic(fmt.Sprintf(pMsg, pArgs...))
+}
