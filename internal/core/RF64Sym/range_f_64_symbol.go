@@ -1,7 +1,7 @@
 // Tipus representatiu de Símbols.
 // CreatedAt: 2025/01/02 dj. JIQ
 
-package rF64Sym
+package rf64sym
 
 import (
 	cs "github.com/jibort/ld_mcac/internal/core/consts"
@@ -24,8 +24,8 @@ func NewF64Symbol(pSymbol rune) base.RangeIntf {
 	// Verifiquem si el símbol està fora del rang UTF-32
 	if pSymbol > 0x10FFFF {
 		// Retornem un F64RangeError amb un codi d'error específic
-		err := errs.NewError(false, cs.ErrCode_OutOfRangeSymbol, uint64(pSymbol))
-		return err
+		err := errs.NewError(false, cs.ErrCode_OutOfRangeSymbol, []uint64{uint64(uint32(pSymbol))})
+		return &err
 	}
 
 	// Codifiquem el símbol directament dins de F64Range

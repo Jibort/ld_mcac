@@ -96,6 +96,20 @@ func Quantize32One(pVal float32) float32 {
 // 	return float32(math.Round(val*cs.Factor32) / cs.Factor32)
 // }
 
+// Clamp64 limita un valor dins del rang [min, max].
+// Si el valor és menor que min, retorna min.
+// Si el valor és major que max, retorna max.
+// En cas contrari, retorna el valor original.
+func Clamp64(value, min, max float64) float64 {
+	if value < min {
+		return min
+	}
+	if value > max {
+		return max
+	}
+	return value
+}
+
 // CONVERSIONS ------------------------
 // F64 a ..............................
 func F64ToF64(pFt float64) float64 {

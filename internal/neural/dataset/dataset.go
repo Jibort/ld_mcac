@@ -2,7 +2,7 @@ package dataset
 
 import (
 	isym "github.com/jibort/ld_mcac/internal/core/intf/symbols"
-	syms "github.com/jibort/ld_mcac/internal/core/rF64Sym"
+	syms "github.com/jibort/ld_mcac/internal/core/rf64sym"
 )
 
 // Dataset representa el conjunt de dades amb valors F64Range.

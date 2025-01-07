@@ -12,7 +12,7 @@ import (
 
 // Test per validar la creació d'un RangeF64Error
 func TestNewRangeF64Error(t *testing.T) {
-	errorInstance := base.NewError(false, 10, 42)
+	errorInstance := base.NewError(false, 10, []uint64{42})
 
 	if !errorInstance.IsError() {
 		t.Errorf("Expected IsError() to return true, got false")
@@ -38,7 +38,7 @@ func TestNewRangeF64Error_InvalidCode(t *testing.T) {
 		}
 	}()
 
-	_ = base.NewError(true, 999, 0) // Codi fora del rang vàlid
+	_ = base.NewError(true, 999, []uint64{0}) // Codi fora del rang vàlid
 }
 
 // Test per validar arguments invàlids
@@ -49,12 +49,12 @@ func TestNewRangeF64Error_InvalidArgs(t *testing.T) {
 		}
 	}()
 
-	_ = base.NewError(true, 10, math.MaxInt64) // Arguments fora del rang vàlid
+	_ = base.NewError(true, 10, []uint64{math.MaxInt64}) // Arguments fora del rang vàlid
 }
 
 // Test per validar el comportament de Decode
 func TestDecode(t *testing.T) {
-	errorInstance := base.NewError(false, 20, 128)
+	errorInstance := base.NewError(false, 20, []uint64{128})
 
 	critic, code, args := errorInstance.Decode()
 	if critic {

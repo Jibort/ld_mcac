@@ -1,4 +1,3 @@
-// range_f_64.go
 // Implementació dels valors Range en float64.
 // CreatedAt: 2024/12/08 dg. JIQ
 

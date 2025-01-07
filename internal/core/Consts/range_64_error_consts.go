@@ -28,3 +28,6 @@ const ErrCode_InvalidPercentage uint16 = 0b00000000_00000010
 // '0000000011' (3): Símbol fora de rang
 // 		a: L'error no fa servir paràmetres
 const ErrCode_OutOfRangeSymbol uint16 = 0b00000000_00000011
+
+// '0000000100' (4): Funció no executable
+const ErrCode_NotExecutableFunction uint16 = 0b00000000_00000100

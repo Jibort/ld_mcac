@@ -7,18 +7,22 @@ import (
 	cs "github.com/jibort/ld_mcac/internal/core/consts"
 )
 
-func E_Unknown(pArgs uint64) Error {
+func E_Unknown(pArgs []uint64) Error {
 	return NewError(true, cs.ErrCode_UnknownError, pArgs)
 }
 
-func E_InvalidArguments(pArgs uint64) Error {
+func E_InvalidArguments(pArgs []uint64) Error {
 	return NewError(true, cs.ErrCode_InvalidArguments, pArgs)
 }
 
-func E_InvalidPercentage(pArgs uint64) Error {
+func E_InvalidPercentage(pArgs []uint64) Error {
 	return NewError(true, cs.ErrCode_InvalidPercentage, pArgs)
 }
 
-func E_OutOfRangeSymbol(pArgs uint64) Error {
+func E_OutOfRangeSymbol(pArgs []uint64) Error {
 	return NewError(true, cs.ErrCode_OutOfRangeSymbol, pArgs)
+}
+
+func E_NotExecutableFunction(pArgs []uint64) Error {
+	return NewError(true, cs.ErrCode_NotExecutableFunction, pArgs)
 }

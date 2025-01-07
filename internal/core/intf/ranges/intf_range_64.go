@@ -36,7 +36,7 @@ type U64RangeIntf interface {
 type F64RangeOneIntf interface {
 	F64RangeIntf // Hereta les funcions generals per a tots els Range64
 
-	AsF64TwoPi() F64RangeTwoPiIntf // Conversió a [-2·π, +2·π] bits
+	AsF64TwoPi() F64RangeTwoPiIntf // Conversió a rang [-2·π, +2·π] en float64
 }
 
 // Interfície per a valors floating points de 64bits.
@@ -51,12 +51,12 @@ type F64RangeTwoPiIntf interface {
 type U64RangeOneIntf interface {
 	F64RangeIntf // Hereta les funcions generals per a tots els Range64
 
-	AsF64TwoPi() F64RangeTwoPiIntf // Conversió a [-2·π, +2·π] bits
+	AsU64TwoPi() U64RangeTwoPiIntf // Conversió a [-2π, +2π] bits
 }
 
 // Interfície per a valors floating points de 64bits.
 type U64RangeTwoPiIntf interface {
 	F64RangeIntf // Hereta les funcions generals per a tots els Range64
 
-	AsF64One() F64RangeOneIntf // Conversió a rang [-1.0,+1.0] bits
+	AsU64One() U64RangeOneIntf // Conversió a rang [-1.0,+1.0] bits
 }

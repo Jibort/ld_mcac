@@ -3,12 +3,14 @@
 
 package r
 
-import base "github.com/jibort/ld_mcac/internal/core/intf/base"
+import (
+	base "github.com/jibort/ld_mcac/internal/core/intf/base"
+)
 
 // ESTRUCUTURES -----------------------
 // X64Range representa un tipus especialitzat de 64 bits.
 type Range struct {
-	// intf.RangeIntf
+	base.RangeIntf
 }
 
 // Assegura que Range implementa RangeIntf
@@ -18,7 +20,7 @@ func (m Range) AsFloat64() float64 {
 	panic("Range.AsFloat64: not implemented") // TODO: Implement
 }
 
-func (m Range) SetFloat64(_ float64) {
+func (m *Range) SetFloat64(_ float64) {
 	panic("Range.SetFloat64: not implemented") // TODO: Implement
 }
 
@@ -26,7 +28,7 @@ func (m Range) AsUint64() uint64 {
 	panic("Range.AsUint64: not implemented") // TODO: Implement
 }
 
-func (m Range) SetUint64(_ uint64) {
+func (m *Range) SetUint64(_ uint64) {
 	panic("Range.SetUint64: not implemented") // TODO: Implement
 }
 
@@ -34,7 +36,7 @@ func (m Range) AsFloat32() float32 {
 	panic("Range.AsFloat32: not implemented") // TODO: Implement
 }
 
-func (m Range) SetFloat32(_ float32) {
+func (m *Range) SetFloat32(_ float32) {
 	panic("Range.SetFloat32: not implemented") // TODO: Implement
 }
 
@@ -42,7 +44,7 @@ func (m Range) AsUint32() uint32 {
 	panic("Range.AsUint32: not implemented") // TODO: Implement
 }
 
-func (m Range) SetUint32(_ uint32) {
+func (m *Range) SetUint32(_ uint32) {
 	panic("Range.SetUint32: not implemented") // TODO: Implement
 }
 

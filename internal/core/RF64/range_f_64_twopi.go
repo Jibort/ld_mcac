@@ -13,7 +13,7 @@ import (
 	tools "github.com/jibort/ld_mcac/internal/core/tools"
 )
 
-// Tipus F64RangeTwoPi representa el rang [-2·π, +2·π].
+// Tipus F64RangeTwoPi representa el rang [-2π, +2π].
 type F64RangeTwoPi struct {
 	rngs.F64RangeTwoPiIntf
 
